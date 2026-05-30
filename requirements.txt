@@ -1,0 +1,3 @@
+# Hugging Face Spaces preview dependency for app.py.
+# Runtime services use requirements/*.txt.
+gradio>=4.44,<6

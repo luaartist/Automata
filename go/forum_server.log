@@ -1,0 +1,39 @@
+nohup: ignoring input
+2026/05/30 12:46:38 ✅ Forum database initialized at /root/.lean4a/forum.db
+2026/05/30 12:46:38 🔌 Reverse proxy registered on /api/python-dashboard/ to http://localhost:8002
+2026/05/30 12:46:38 🔌 Reverse proxy registered on /api/chattts/ to http://localhost:7777
+2026/05/30 12:46:38 🔌 Reverse proxy registered on /api/jepa/ and /api/speechmatics/ to http://localhost:8003
+2026/05/30 12:46:38 📂 Serving static dashboard UI from /root/workspace/Automata/Lean4-Automata/ui on /ui/ with cache-busting headers
+2026/05/30 12:46:38 ✅ Forum routes registered
+2026/05/30 12:46:38 Lean4-Automata forum harness listening on :8443
+2026/05/30 13:51:39 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:39 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:39 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:39 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:40 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:40 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:40 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:40 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:40 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:41 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:41 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:41 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:41 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:41 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:42 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:42 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:42 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:42 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:42 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:43 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:43 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:43 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:43 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:44 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:44 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:44 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:44 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:45 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:45 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:45 http: proxy error: dial tcp [::1]:8002: connect: connection refused
+2026/05/30 13:51:45 http: proxy error: dial tcp [::1]:8002: connect: connection refused

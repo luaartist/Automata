@@ -1,0 +1,319 @@
+{
+  "flows": [
+    {
+      "name": "lean_sorry_scan",
+      "description": "Scan Lean4 codebase for sorry statements",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "file_pattern": {
+            "type": "string",
+            "description": "File pattern to match (e.g., *.lean)",
+            "default": "*.lean"
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\ntry:\n    resp = requests.get('http://localhost:8000/query', json={'query': 'SELECT file_path, sorry_count, total_declarations FROM v_proof_status WHERE sorry_count > 0 ORDER BY sorry_count DESC'})\n    result = resp.json()\n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'error': str(e)}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["lean", "sorry", "proof-status"]
+    },
+    {
+      "name": "lean_float_scan",
+      "description": "Query floating symbols (definitions without proofs)",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of results",
+            "default": 100
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\ntry:\n    resp = requests.get('http://localhost:8000/query', json={'query': 'SELECT symbol_name, file_path, definition_type FROM v_floating_symbols ORDER BY symbol_name LIMIT 100'})\n    result = resp.json()\n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'error': str(e)}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["lean", "floating", "symbols"]
+    },
+    {
+      "name": "lean_file_interconnect",
+      "description": "Analyze file dependencies and imports",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Specific file to analyze (optional)",
+            "default": ""
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\ntry:\n    resp = requests.get('http://localhost:8000/query', json={'query': 'SELECT file_path, import_count, exported_symbols FROM v_file_interconnect ORDER BY import_count DESC LIMIT 50'})\n    result = resp.json()\n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'error': str(e)}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["lean", "dependencies", "imports"]
+    },
+    {
+      "name": "lean_diff_mathlib",
+      "description": "Compare local Lean files against mathlib (placeholder)",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "branch": {
+            "type": "string",
+            "description": "Git branch to compare",
+            "default": "main"
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "echo '{\"status\": \"not_implemented\", \"message\": \"Mathlib diff requires lake integration. Future enhancement: compare local symbols against mathlib4 master branch.\", \"placeholder\": true}'",
+      "enabled": false,
+      "tags": ["lean", "mathlib", "diff", "placeholder"]
+    },
+    {
+      "name": "tph_inference",
+      "description": "Run token inference through TPH model on MI300X GPU",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "tokens": {
+            "type": "array",
+            "description": "Token IDs to process",
+            "items": {
+              "type": "integer"
+            },
+            "default": [42, 17, 89]
+          },
+          "max_length": {
+            "type": "integer",
+            "description": "Maximum sequence length",
+            "default": 50
+          }
+        }
+      },
+      "handler_type": "proxy",
+      "proxy_target": "http://localhost:5000/inference",
+      "enabled": true,
+      "tags": ["tph", "inference", "gpu", "ml"]
+    },
+    {
+      "name": "tph_status",
+      "description": "Check TPH GPU server status and model info",
+      "params_schema": {
+        "type": "object"
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\ntry:\n    resp = requests.get('http://localhost:5000/status')\n    result = resp.json()\n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'error': str(e), 'status': 'offline'}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["tph", "status", "gpu"]
+    },
+    {
+      "name": "formula_match",
+      "description": "Match DynamicFlux Python formula against Lean symbols",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "formula": {
+            "type": "string",
+            "description": "Python formula to match (e.g., 'x**2 + y**2')",
+            "default": ""
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "echo '{\"status\": \"not_implemented\", \"message\": \"Formula matching requires DynamicFlux integration. Path: /workspace/vessel-production/DynamicFlux/formula_matcher.py\", \"placeholder\": true}'",
+      "enabled": false,
+      "tags": ["formula", "dynamicflux", "matching", "placeholder"]
+    },
+    {
+      "name": "wolfram_verify",
+      "description": "Verify mathematical formula via Wolfram Engine",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "formula": {
+            "type": "string",
+            "description": "Mathematical formula in Wolfram Language",
+            "default": "Integrate[x^2, x]"
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "echo '{\"status\": \"not_implemented\", \"message\": \"Wolfram verification requires C# UniversalLLMOrchestrator. Path: /mnt/doscratch/Work/AMD_COMPETITION_MVP/Quantum_Study_Hall/Grok_Research_Tool/\", \"placeholder\": true}'",
+      "enabled": false,
+      "tags": ["wolfram", "verification", "math", "placeholder"]
+    },
+    {
+      "name": "env_check",
+      "description": "Validate Python environment and dependencies",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "verbose": {
+            "type": "boolean",
+            "description": "Show detailed package information",
+            "default": false
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport sys\nimport json\nimport importlib.metadata\n\nresult = {\n    'python_version': sys.version,\n    'python_path': sys.executable,\n    'packages': {}\n}\n\nfor pkg in ['torch', 'requests', 'flask', 'flask_cors', 'numpy', 'psycopg2']:\n    try:\n        v = importlib.metadata.version(pkg)\n        result['packages'][pkg] = v\n    except:\n        result['packages'][pkg] = 'NOT INSTALLED'\n\nprint(json.dumps(result, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["env", "python", "dependencies", "diagnostics"]
+    },
+    {
+      "name": "gpu_check",
+      "description": "Check AMD GPU status and ROCm availability",
+      "params_schema": {
+        "type": "object"
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport subprocess\nimport json\n\nresult = {'gpu_available': False, 'rocm_version': None, 'gpus': []}\n\ntry:\n    # Check ROCm\n    rocm_output = subprocess.check_output(['rocm-smi', '--showproductname'], text=True)\n    result['gpu_available'] = True\n    result['gpus'] = [line.strip() for line in rocm_output.split('\\\\n') if line.strip()]\n    \n    # Check PyTorch CUDA\n    import torch\n    result['torch_cuda'] = torch.cuda.is_available()\n    result['torch_device_count'] = torch.cuda.device_count()\n    if torch.cuda.is_available():\n        result['torch_device_name'] = torch.cuda.get_device_name(0)\nexcept Exception as e:\n    result['error'] = str(e)\n\nprint(json.dumps(result, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["gpu", "rocm", "hardware", "diagnostics"]
+    },
+    {
+      "name": "lean_db_health",
+      "description": "Check Lean4-Automata database health and statistics",
+      "params_schema": {
+        "type": "object"
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\ntry:\n    # Query database statistics\n    queries = {\n        'total_files': 'SELECT COUNT(DISTINCT file_path) FROM lean_symbols',\n        'total_symbols': 'SELECT COUNT(*) FROM lean_symbols',\n        'sorry_count': 'SELECT SUM(sorry_count) FROM v_proof_status',\n        'floating_symbols': 'SELECT COUNT(*) FROM v_floating_symbols'\n    }\n    \n    result = {'status': 'ok', 'stats': {}}\n    \n    for key, query in queries.items():\n        resp = requests.get('http://localhost:8000/query', json={'query': query})\n        if resp.status_code == 200:\n            result['stats'][key] = resp.json()\n        else:\n            result['stats'][key] = 'error'\n    \n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'status': 'error', 'error': str(e)}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["lean", "database", "health", "statistics"]
+    },
+    {
+      "name": "quick_proof_report",
+      "description": "Generate comprehensive proof status report",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "description": "Output format: json or markdown",
+            "default": "json",
+            "enum": ["json", "markdown"]
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "python3 -c \"\nimport requests\nimport json\n\ntry:\n    # Get proof status summary\n    resp = requests.get('http://localhost:8000/query', json={\n        'query': '''\n            SELECT \n                COUNT(*) as total_files,\n                SUM(sorry_count) as total_sorries,\n                SUM(CASE WHEN sorry_count = 0 THEN 1 ELSE 0 END) as complete_files,\n                AVG(sorry_count) as avg_sorries_per_file\n            FROM v_proof_status\n        '''\n    })\n    \n    result = {\n        'summary': resp.json(),\n        'top_sorry_files': [],\n        'timestamp': __import__('datetime').datetime.now().isoformat()\n    }\n    \n    # Get top 10 files with most sorries\n    resp2 = requests.get('http://localhost:8000/query', json={\n        'query': 'SELECT file_path, sorry_count FROM v_proof_status WHERE sorry_count > 0 ORDER BY sorry_count DESC LIMIT 10'\n    })\n    result['top_sorry_files'] = resp2.json()\n    \n    print(json.dumps(result, indent=2))\nexcept Exception as e:\n    print(json.dumps({'error': str(e)}, indent=2))\n\"",
+      "enabled": true,
+      "tags": ["lean", "proof", "report", "summary"]
+    },
+    {
+      "name": "lean_proof_audit",
+      "description": "Audit Lean proof map (summary by default)",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string",
+            "description": "Type of audit report: summary (counts only) or full (includes mismatches)",
+            "default": "summary",
+            "enum": ["summary", "full"]
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "cd $PROJECT_ROOT && python3 Lean4-Automata/tools/lean_proof_audit.py audit-$REPORT_TYPE 2>&1",
+      "enabled": true,
+      "tags": ["lean", "audit", "imports", "proof-map"]
+    },
+    {
+      "name": "lean_millennium_paths",
+      "description": "Analyze dependency paths to Millennium.lean",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target module (default: Millennium.lean)",
+            "default": "Millennium.lean"
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "cd $PROJECT_ROOT && python3 Lean4-Automata/tools/lean_proof_audit.py millennium-path 2>&1",
+      "enabled": true,
+      "tags": ["lean", "dependencies", "paths", "millennium"]
+    },
+    {
+      "name": "lean_cohesion_ranking",
+      "description": "Rank modules by cohesion score (top 15 by default)",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Number of top modules to return",
+            "default": 15,
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "cd $PROJECT_ROOT && python3 Lean4-Automata/tools/lean_proof_audit.py cohesion-ranking 2>&1",
+      "enabled": true,
+      "tags": ["lean", "ranking", "cohesion", "metrics"]
+    },
+    {
+      "name": "lean_proof_edit_guard",
+      "description": "Guard Lean proof edits by classifying git diff risk and lake build diagnostics",
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "diff_file": {
+            "type": "string",
+            "description": "Optional unified diff file to analyze; defaults to current tracked Lean git diff",
+            "default": ""
+          },
+          "build_log_file": {
+            "type": "string",
+            "description": "Optional lake build log file to classify",
+            "default": ""
+          },
+          "build_returncode": {
+            "type": "integer",
+            "description": "Return code associated with build_log_file",
+            "default": 0
+          },
+          "run_build": {
+            "type": "boolean",
+            "description": "Run the build command and classify its output",
+            "default": false
+          },
+          "build_command": {
+            "type": "string",
+            "description": "Build command used when run_build is true",
+            "default": "lake build"
+          },
+          "backup_path": {
+            "type": "string",
+            "description": "Backup archive or directory associated with the edit",
+            "default": ""
+          }
+        }
+      },
+      "handler_type": "subprocess",
+      "command_template": "cd $PROJECT_ROOT && python3 Lean4-Automata/tools/forum_handlers.py lean_proof_edit_guard '{}' 2>&1",
+      "enabled": true,
+      "tags": ["lean", "proof-edit", "diff", "build", "rollback"]
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Flow definitions for Lean4-Automata Forum CLI harness",
+    "last_updated": "2025-05-07",
+    "notes": [
+      "Flows marked with 'placeholder: true' are not fully implemented",
+      "Subprocess flows use Python3 for portability",
+      "Proxy flows forward requests to local services",
+      "All flows include error handling and JSON output"
+    ]
+  }
+}

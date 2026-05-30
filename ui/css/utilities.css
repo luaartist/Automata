@@ -1,0 +1,52 @@
+/* General Utility Classes */
+.u-flex {
+    display: flex;
+}
+
+.u-flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.u-align-center {
+    align-items: center;
+}
+
+.u-justify-between {
+    justify-content: space-between;
+}
+
+.u-gap-1 { gap: var(--ds-space-1); }
+.u-gap-2 { gap: var(--ds-space-2); }
+.u-gap-3 { gap: var(--ds-space-3); }
+.u-gap-4 { gap: var(--ds-space-4); }
+
+.u-w-full {
+    width: 100%;
+}
+
+.u-h-full {
+    height: 100%;
+}
+
+.u-hidden {
+}
+
+/* Typography Utilities */
+.u-text-center {
+    text-align: center;
+}
+
+.u-text-muted {
+}
+
+.u-font-mono {
+}
+
+.u-semibold {
+    font-weight: 600;
+}
+
+.u-bold {
+    font-weight: 700;
+}

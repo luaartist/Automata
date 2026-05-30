@@ -1,0 +1,90 @@
+/* Mathematically Grounded Design Tokens & Semantic Systems */
+:root {
+    /* Base Color Hues */
+    --ds-hue-base: 220;
+    --ds-hue-cyan: 195;
+    --ds-hue-purple: 280;
+    --ds-hue-green: 140;
+    --ds-hue-amber: 40;
+    --ds-hue-red: 0;
+
+    /* Base Color Palette Scales */
+    --ds-color-gray-900: hsl(var(--ds-hue-base) 20% 8%);
+    --ds-color-gray-800: hsl(var(--ds-hue-base) 18% 12%);
+    --ds-color-gray-700: hsl(var(--ds-hue-base) 15% 18%);
+    --ds-color-gray-600: hsl(var(--ds-hue-base) 12% 28%);
+    --ds-color-gray-500: hsl(var(--ds-hue-base) 10% 45%);
+    --ds-color-gray-400: hsl(var(--ds-hue-base) 10% 60%);
+    --ds-color-gray-300: hsl(var(--ds-hue-base) 12% 75%);
+    --ds-color-gray-200: hsl(var(--ds-hue-base) 15% 88%);
+    --ds-color-gray-100: hsl(var(--ds-hue-base) 20% 96%);
+
+    /* Core Semantic Variables (Dark Mode Default) */
+    --ds-bg-dark: var(--ds-color-gray-900);
+    --ds-sidebar-bg: var(--ds-color-gray-800);
+    --ds-panel-bg: rgba(24, 30, 48, 0.6);
+    --ds-border-glow: rgba(0, 198, 255, 0.12);
+    
+    --ds-accent-cyan: hsl(var(--ds-hue-cyan) 100% 55%);
+    --ds-accent-blue: hsl(var(--ds-hue-base) 100% 50%);
+    --ds-accent-purple: hsl(var(--ds-hue-purple) 75% 60%);
+    
+    --ds-success-green: hsl(var(--ds-hue-green) 70% 45%);
+    --ds-warning-yellow: hsl(var(--ds-hue-amber) 90% 50%);
+    --ds-error-red: hsl(var(--ds-hue-red) 85% 55%);
+    
+    --ds-text-light: hsl(var(--ds-hue-base) 100% 96%);
+    --ds-text-muted: hsl(var(--ds-hue-base) 15% 70%);
+
+    /* 27-Step Quantum Orbit Hue Mapping (Cyclic Group C27) */
+    --ds-qstep-1: hsl(calc(var(--ds-hue-base) + 0 * 13.33) 85% 60%);
+    --ds-qstep-2: hsl(calc(var(--ds-hue-base) + 1 * 13.33) 85% 60%);
+    --ds-qstep-3: hsl(calc(var(--ds-hue-base) + 2 * 13.33) 85% 60%);
+    --ds-qstep-4: hsl(calc(var(--ds-hue-base) + 3 * 13.33) 85% 60%);
+    --ds-qstep-5: hsl(calc(var(--ds-hue-base) + 4 * 13.33) 85% 60%);
+    --ds-qstep-6: hsl(calc(var(--ds-hue-base) + 5 * 13.33) 85% 60%);
+    --ds-qstep-7: hsl(calc(var(--ds-hue-base) + 6 * 13.33) 85% 60%);
+    --ds-qstep-8: hsl(calc(var(--ds-hue-base) + 7 * 13.33) 85% 60%);
+    --ds-qstep-9: hsl(calc(var(--ds-hue-base) + 8 * 13.33) 85% 60%);
+    --ds-qstep-10: hsl(calc(var(--ds-hue-base) + 9 * 13.33) 85% 60%);
+    --ds-qstep-11: hsl(calc(var(--ds-hue-base) + 10 * 13.33) 85% 60%);
+    --ds-qstep-12: hsl(calc(var(--ds-hue-base) + 10 * 13.33) 85% 60%);
+    --ds-qstep-13: hsl(calc(var(--ds-hue-base) + 12 * 13.33) 85% 60%);
+    --ds-qstep-14: hsl(calc(var(--ds-hue-base) + 13 * 13.33) 85% 60%);
+    --ds-qstep-15: hsl(calc(var(--ds-hue-base) + 14 * 13.33) 85% 60%);
+    --ds-qstep-16: hsl(calc(var(--ds-hue-base) + 15 * 13.33) 85% 60%);
+    --ds-qstep-17: hsl(calc(var(--ds-hue-base) + 16 * 13.33) 85% 60%);
+    --ds-qstep-18: hsl(calc(var(--ds-hue-base) + 17 * 13.33) 85% 60%);
+    --ds-qstep-19: hsl(calc(var(--ds-hue-base) + 18 * 13.33) 85% 60%);
+    --ds-qstep-20: hsl(calc(var(--ds-hue-base) + 19 * 13.33) 85% 60%);
+    --ds-qstep-21: hsl(calc(var(--ds-hue-base) + 20 * 13.33) 85% 60%);
+    --ds-qstep-22: hsl(calc(var(--ds-hue-base) + 21 * 13.33) 85% 60%);
+    --ds-qstep-23: hsl(calc(var(--ds-hue-base) + 22 * 13.33) 85% 60%);
+    --ds-qstep-24: hsl(calc(var(--ds-hue-base) + 23 * 13.33) 85% 60%);
+    --ds-qstep-25: hsl(calc(var(--ds-hue-base) + 24 * 13.33) 85% 60%);
+    --ds-qstep-26: hsl(calc(var(--ds-hue-base) + 25 * 13.33) 85% 60%);
+    --ds-qstep-27: hsl(calc(var(--ds-hue-base) + 26 * 13.33) 85% 60%);
+
+    /* Fluid Spacing Scale */
+    --ds-space-1: 0.25rem;
+    --ds-space-2: 0.5rem;
+    --ds-space-3: 0.75rem;
+    --ds-space-4: 1rem;
+    --ds-space-5: 1.5rem;
+    --ds-space-6: 2rem;
+    --ds-space-7: 3rem;
+    --ds-space-8: 4rem;
+
+    /* Typographic Fluid Scales */
+    --ds-font-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    --ds-font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    
+    --ds-size-step--2: 0.75rem;
+    --ds-size-step--1: 0.875rem;
+    --ds-size-step-0: 1rem;
+    --ds-size-step-1: 1.125rem;
+    --ds-size-step-2: 1.25rem;
+    --ds-size-step-3: 1.5rem;
+    --ds-size-step-4: 1.875rem;
+    --ds-size-step-5: 2.25rem;
+}

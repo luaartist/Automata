@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lean4-Automata Offline Internal Dashboard</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="offline_internal.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="header">
+      <p class="muted">Local internal surface</p>
+      <h1>Lean4-Automata Offline Dashboard</h1>
+      <p class="lead">A no-CDN artifact navigator for maintainers. This page does not call FastAPI, Go, Docker, Wolfram, Postgres, or any remote service.</p>
+    </header>
+
+    <section aria-labelledby="status-heading">
+      <h2 id="status-heading">Package Status</h2>
+      <div class="status-row">
+        <div class="status ok"><strong>Static public page</strong><span>Available at public/index.html.</span></div>
+        <div class="status ok"><strong>Offline dashboard</strong><span>Available as this local file.</span></div>
+        <div class="status warn"><strong>Live flows</strong><span>Require the local Go/FastAPI stack.</span></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="artifact-heading">
+      <h2 id="artifact-heading">Artifact Index</h2>
+      <div class="grid">
+        <article class="tile"><h3>README</h3><p class="muted">Project overview and run notes.</p><a href="../README.md">Open README</a></article>
+        <article class="tile"><h3>Design Schema</h3><p class="muted">Public surface contract and trust boundaries.</p><a href="../docs/public-face-design-schema.md">Open design schema</a></article>
+        <article class="tile"><h3>Packaging Surfaces</h3><p class="muted">Entrypoints for static, HF, Next, and internal pages.</p><a href="../docs/packaging-surfaces.md">Open packaging doc</a></article>
+        <article class="tile"><h3>Audit Flows</h3><p class="muted">Audit route and flow documentation.</p><a href="../README_AUDIT_FLOWS.md">Open audit flow docs</a></article>
+        <article class="tile"><h3>Database Contract</h3><p class="muted">Mapping, OTS, and L2BL4 evidence schema.</p><a href="../README_DATABASE.md">Open database README</a></article>
+        <article class="tile"><h3>Static Public Page</h3><p class="muted">Public proof observatory overview.</p><a href="../public/index.html">Open public page</a></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="matrix-heading">
+      <h2 id="matrix-heading">Surface Matrix</h2>
+      <div class="table-scroll" role="region" aria-label="Surface matrix table" tabindex="0">
+        <table>
+          <thead><tr><th>Surface</th><th>Purpose</th><th>Entrypoint</th><th>Requires server?</th><th>Audience</th></tr></thead>
+          <tbody>
+            <tr><td>Static public page</td><td>Portable overview</td><td>public/index.html</td><td>No</td><td>Public</td></tr>
+            <tr><td>Hugging Face preview</td><td>Hosted read-only presentation</td><td>app.py</td><td>HF runtime only</td><td>Public</td></tr>
+            <tr><td>Next frontend</td><td>Live project workbench</td><td>frontend/app/page.tsx</td><td>Yes</td><td>Users</td></tr>
+            <tr><td>Go forum harness</td><td>Flow runner and tickets</td><td>ui/lean4a_forum.html</td><td>Yes</td><td>Operators</td></tr>
+            <tr><td>Offline dashboard</td><td>Local artifact index</td><td>ui/offline_internal.html</td><td>No</td><td>Maintainers</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="checklist-heading">
+      <h2 id="checklist-heading">Maintainer Checklist</h2>
+      <ul class="checklist">
+        <li>Ask the user what they are proving.</li>
+        <li>Ask which Lean module or theorem is the main target.</li>
+        <li>Run import, symbol, and proof-completion scans before making public claims.</li>
+        <li>Keep Wolfram companion maps optional and label unavailable runtime states honestly.</li>
+        <li>Issue keepsake badges only as local audit memories unless OTS contract requirements pass.</li>
+        <li>Store timestamped backups under .shipping_backups/ before changing public or internal UI surfaces.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lean4-Automata Proof Verification Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #1a1a2e;
+            --bg-darker: #16213e;
+            --accent-blue: #3498db;
+            --accent-purple: #9b59b6;
+            --success-green: #27ae60;
+            --error-red: #e74c3c;
+            --warning-yellow: #f39c12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .status-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .badge-status.online {
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+
+        .badge-status.offline {
+            border-color: var(--error-red);
+            color: var(--error-red);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr 350px;
+            gap: 20px;
+            padding: 0 20px 20px;
+            height: calc(100vh - 180px);
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .sidebar, .tickets-panel {
+                max-height: 400px;
+            }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Flow Buttons Sidebar */
+        .flow-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .flow-btn:hover {
+            background: rgba(52, 152, 219, 0.4);
+            transform: translateX(5px);
+        }
+
+        .flow-btn:focus-visible,
+        button:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        .flow-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .flow-btn.running {
+            background: rgba(155, 89, 182, 0.3);
+            border-color: var(--accent-purple);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Live Log Panel */
+        .log-panel {
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 15px;
+            height: 100%;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-left: 3px solid transparent;
+            word-wrap: break-word;
+        }
+
+        .log-entry.info {
+            border-color: var(--accent-blue);
+            color: #aaf;
+        }
+
+        .log-entry.stdout {
+            border-color: var(--success-green);
+            color: #afa;
+        }
+
+        .log-entry.stderr {
+            border-color: var(--error-red);
+            color: #faa;
+        }
+
+        .log-entry.error {
+            border-color: var(--error-red);
+            background: rgba(231, 76, 60, 0.1);
+            color: #faa;
+        }
+
+        /* Tickets Panel */
+        .ticket-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ticket-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .ticket-item.expanded {
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .ticket-flow-name {
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .ticket-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .ticket-status.success {
+            background: var(--success-green);
+            color: #000;
+        }
+
+        .ticket-status.error {
+            background: var(--error-red);
+            color: #fff;
+        }
+
+        .ticket-status.timeout {
+            background: var(--warning-yellow);
+            color: #000;
+        }
+
+        .ticket-meta {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .ticket-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ticket-content.show {
+            display: block;
+        }
+
+        .ticket-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.8em;
+            color: #ccc;
+        }
+
+        .ticket-summary {
+            margin-bottom: 12px;
+            color: #ddd;
+            line-height: 1.5;
+        }
+
+        .ticket-summary-section {
+            margin-bottom: 10px;
+        }
+
+        /* JSON Syntax Highlighting */
+        .json-key {
+            color: #79c0ff;
+            font-weight: bold;
+        }
+
+        .json-string {
+            color: #a5d6a7;
+        }
+
+        .json-number {
+            color: #ffab40;
+        }
+
+        .json-boolean {
+            color: #ab47bc;
+        }
+
+        .json-null {
+            color: #ef5350;
+        }
+
+        /* Flash animation for new tickets */
+        @keyframes flash-new {
+            0%, 100% { background: rgba(255,255,255,0.05); }
+            50% { background: rgba(52, 152, 219, 0.3); }
+        }
+
+        .ticket-item.new-flash {
+            animation: flash-new 1s ease-in-out 3;
+        }
+
+        /* SSE Connection status badge */
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            font-size: 0.75em;
+            margin-left: 10px;
+        }
+
+        .connection-status.connected {
+            color: var(--success-green);
+        }
+
+        .connection-status.disconnected {
+            color: #888;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .connection-status.connected .connection-dot {
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Auto-refresh toggle button */
+        .auto-refresh-toggle {
+            padding: 6px 12px;
+            background: rgba(155, 89, 182, 0.2);
+            border: 1px solid var(--accent-purple);
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .auto-refresh-toggle:hover {
+            background: rgba(155, 89, 182, 0.4);
+        }
+
+        .auto-refresh-toggle.active {
+            background: rgba(155, 89, 182, 0.4);
+            border-color: var(--accent-purple);
+        }
+
+        /* Flow grouping */
+        .flow-group-title {
+            font-size: 0.75em;
+            font-weight: bold;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .flow-group-title:first-child {
+            margin-top: 0;
+        }
+
+        .session-selector {
+            margin-bottom: 15px;
+        }
+
+        .session-selector select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid var(--error-red);
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: rgba(231, 76, 60, 0.5);
+        }
+
+        .refresh-btn {
+            padding: 8px 16px;
+            background: rgba(52, 152, 219, 0.3);
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(52, 152, 219, 0.5);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* LLM Chat Panel Styles */
+        .tab-content {
+            padding: 20px;
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 15px;
+            height: calc(100vh - 250px);
+        }
+
+        @media (max-width: 1200px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .model-selector {
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 0.9em;
+        }
+
+        .context-btn, .clear-chat-btn {
+            padding: 6px 12px;
+            background: rgba(52, 152, 219, 0.3);
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .context-btn:hover, .clear-chat-btn:hover {
+            background: rgba(52, 152, 219, 0.5);
+        }
+
+        .clear-chat-btn {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--error-red);
+        }
+
+        .clear-chat-btn:hover {
+            background: rgba(231, 76, 60, 0.5);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            max-height: 450px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .chat-message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .chat-message.user .message-bubble {
+            background: rgba(52, 152, 219, 0.4);
+            border: 1px solid var(--accent-blue);
+            color: #fff;
+        }
+
+        .chat-message.assistant .message-bubble {
+            background: rgba(155, 89, 182, 0.3);
+            border: 1px solid var(--accent-purple);
+            color: #fff;
+        }
+
+        .chat-message.error .message-bubble {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid var(--error-red);
+            max-width: 100%;
+        }
+
+        .message-bubble pre {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .message-bubble code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .message-bubble pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chat-input-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .inject-context-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+
+        .inject-context-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .send-btn, .stop-btn {
+            padding: 10px 20px;
+            background: rgba(52, 152, 219, 0.4);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .send-btn:hover {
+            background: rgba(52, 152, 219, 0.6);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stop-btn {
+            background: rgba(231, 76, 60, 0.4);
+            border-color: var(--error-red);
+        }
+
+        .stop-btn:hover {
+            background: rgba(231, 76, 60, 0.6);
+        }
+
+        .context-panel {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .context-panel-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .context-content {
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .context-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #ccc;
+        }
+
+        .flow-trigger-btn {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(243, 156, 18, 0.3);
+            border: 1px solid var(--warning-yellow);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .flow-trigger-btn:hover {
+            background: rgba(243, 156, 18, 0.5);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-tabs .nav-link {
+            color: #888;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--accent-blue);
+            background: rgba(52, 152, 219, 0.1);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-code-branch"></i> Lean4-Automata Forum</h1>
+        
+        <!-- Serve Instructions Banner -->
+        <div style="margin: 15px auto; max-width: 700px; padding: 12px; background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 8px; font-size: 0.85em;">
+            <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent-blue);">
+                <i class="fas fa-info-circle"></i> How to Serve This File:
+            </div>
+            <div style="font-family: 'Courier New', monospace; color: #aaa;">
+                <strong>Option 1 (Recommended):</strong> Go_Red server must be running on :8443<br>
+                <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px;">
+                    cd Lean4-Automata/go && go run .
+                </code><br><br>
+                <strong>Option 2 (file:// fallback):</strong> Open directly, API auto-detects localhost:8443<br>
+                <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px;">
+                    file:///path/to/lean4a_forum.html
+                </code>
+            </div>
+        </div>
+        
+        <!-- API Connection Error Banner (hidden by default) -->
+        <div id="api-error-banner" style="display: none; margin: 10px auto; max-width: 700px; padding: 12px; background: rgba(231, 76, 60, 0.2); border: 1px solid var(--error-red); border-radius: 8px; font-size: 0.9em;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Cannot reach Go_Red API at :8443</strong><br>
+            <span style="font-size: 0.85em; color: #ccc;">
+                Start the server with: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">cd go && go run .</code>
+            </span>
+        </div>
+        
+        <div class="status-badges">
+            <div class="badge-status" id="badge-python">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Python: Checking...</span>
+            </div>
+            <div class="badge-status" id="badge-lean">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Lean DB: Checking...</span>
+            </div>
+            <div class="badge-status" id="badge-tph">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>TPH GPU: Checking...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Nav Tabs -->
+    <ul class="nav nav-tabs" style="padding: 0 20px; background: rgba(255,255,255,0.05);">
+        <li class="nav-item">
+            <button class="nav-link active" id="flows-tab" data-bs-toggle="tab" data-bs-target="#flows-panel" type="button">
+                <i class="fas fa-list"></i> Flows
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="tickets-tab" data-bs-toggle="tab" data-bs-target="#tickets-panel" type="button">
+                <i class="fas fa-receipt"></i> Tickets
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="metrics-tab" data-bs-toggle="tab" data-bs-target="#metrics-panel" type="button">
+                <i class="fas fa-chart-simple"></i> Metrics
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="agent-tab" data-bs-toggle="tab" data-bs-target="#agent-panel" type="button">
+                <i class="fas fa-terminal"></i> Debug Agent
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Flows Panel (Original Layout) -->
+        <div class="tab-pane fade show active" id="flows-panel">
+            <div class="main-grid">
+                <!-- Left Sidebar: Flow Buttons -->
+                <div class="card sidebar">
+                    <div class="card-title">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Flows</span>
+                    </div>
+                    <div id="flow-buttons">
+                        <div class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading flows...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: Live Log Panel -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-terminal"></i>
+                        <span>Live Log</span>
+                        <button class="clear-btn" onclick="clearLog()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="log-panel" id="log-panel">
+                        <div class="empty-state">
+                            <i class="fas fa-terminal"></i>
+                            <p>Select a flow to begin...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Tickets Panel (placeholder in flows view) -->
+                <div class="card tickets-panel">
+                    <div class="card-title">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Recent Results</span>
+                    </div>
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        Switch to Tickets tab to view all results
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Panel -->
+        <div class="tab-pane fade" id="tickets-panel">
+            <div style="padding: 20px;">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Results</span>
+                        <button class="refresh-btn" onclick="loadTickets()">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button class="auto-refresh-toggle" id="auto-refresh-toggle" onclick="toggleAutoRefresh()">
+                            <i class="fas fa-clock"></i> Auto-refresh
+                        </button>
+                    </div>
+                    <div class="session-selector">
+                        <select id="session-select">
+                            <option value="">All Tickets</option>
+                        </select>
+                    </div>
+                    <div id="tickets-container">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No results yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Panel (placeholder) -->
+        <div class="tab-pane fade" id="metrics-panel">
+            <div style="padding: 20px;">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>System Metrics</span>
+                    </div>
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Metrics dashboard coming soon...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Panel (LLM Chat Debug) -->
+        <div class="tab-pane fade" id="agent-panel">
+            <div class="chat-container">
+                <!-- Chat Panel -->
+                <div class="chat-panel">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <span class="chat-title">Lean Debug Agent</span>
+                            <select id="model-selector" class="model-selector">
+                                <option value="">Loading models...</option>
+                            </select>
+                        </div>
+                        <div class="chat-controls">
+                            <button class="context-btn" id="context-btn">
+                                <i class="fas fa-cog"></i> Context
+                            </button>
+                            <button class="clear-chat-btn" id="clear-chat-btn">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="empty-state">
+                            <i class="fas fa-comments"></i>
+                            <p>Start a conversation with the debug agent...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <div class="chat-input-controls">
+                            <label class="inject-context-checkbox">
+                                <input type="checkbox" id="inject-context-checkbox" checked>
+                                <span>Inject stack context</span>
+                            </label>
+                        </div>
+                        <div class="chat-input-row">
+                            <textarea 
+                                id="chat-input" 
+                                class="chat-input" 
+                                placeholder="Type your message... (Ctrl+Enter to send, Esc to stop)"
+                                rows="3"
+                            ></textarea>
+                            <button class="send-btn" id="send-btn">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                            <button class="stop-btn" id="stop-btn" style="display: none;">
+                                <i class="fas fa-stop"></i> Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Panel -->
+                <div class="context-panel" id="context-panel-container" style="display: none;">
+                    <div class="context-panel-title">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Stack Context</span>
+                    </div>
+                    <div class="context-content" id="context-content">
+                        <pre>Loading context...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FIX 1: API_BASE with fallback for file:// protocol
+        const API_BASE = window.location.origin === 'null' || window.location.origin === 'file://' || !window.location.origin 
+            ? 'http://localhost:8443' 
+            : window.location.origin;
+        
+        let activeFlow = null;
+        let eventSource = null;
+        let autoRefreshInterval = null;
+        let lastTicketIds = new Set();
+        let flowDefinitionsByName = new Map();
+
+        // ====================================================================
+        // Initialization
+        // ====================================================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('API_BASE:', API_BASE);
+            checkHealth();
+            loadFlows();
+            loadTickets();
+            setInterval(checkHealth, 30000); // Check health every 30s
+            
+            // Initialize LLM chat panel
+            initLLMChat();
+        });
+
+        // ====================================================================
+        // Health Checks
+        // ====================================================================
+
+        async function checkHealth() {
+            try {
+                // Python env
+                const envResp = await fetch(`${API_BASE}/env/status`);
+                const envData = await envResp.json();
+                updateBadge('badge-python', envData.venv_active, 
+                    `Python: ${envData.python_version || 'Unknown'}`);
+
+                // Lean DB
+                const leanResp = await fetch(`${API_BASE}/health`);
+                const leanData = await leanResp.json();
+                updateBadge('badge-lean', leanData.checks.lean_db === 'ok', 
+                    `Lean DB: ${leanData.checks.lean_db}`);
+
+                // TPH GPU
+                updateBadge('badge-tph', leanData.checks.tph_server === 'ok', 
+                    `TPH GPU: ${leanData.checks.tph_server}`);
+            } catch (e) {
+                console.error('Health check failed:', e);
+            }
+        }
+
+        function updateBadge(id, online, text) {
+            const badge = document.getElementById(id);
+            badge.className = `badge-status ${online ? 'online' : 'offline'}`;
+            // SECURITY FIX: escapeHtml prevents XSS from server-returned version strings
+            badge.innerHTML = `
+                <i class="fas fa-${online ? 'check-circle' : 'times-circle'}"></i>
+                <span>${escapeHtml(text)}</span>
+            `;
+        }
+
+        // ====================================================================
+        // Flow Management
+        // ====================================================================
+
+        async function loadFlows() {
+            try {
+                const resp = await fetch(`${API_BASE}/flows`);
+                
+                // FIX 2: Handle fetch failure with visible error banner
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+                
+                const data = await resp.json();
+                setFlowDefinitions(data.flows || []);
+                renderFlows(data.flows || []);
+                
+                // Hide error banner if successful
+                document.getElementById('api-error-banner').style.display = 'none';
+            } catch (e) {
+                console.error('Failed to load flows:', e);
+                
+                // FIX 2: Show error banner
+                document.getElementById('api-error-banner').style.display = 'block';
+                
+                // FIX 6: Show static placeholder buttons for all known flows
+                setFlowDefinitions([]);
+                renderStaticFlowButtons();
+            }
+        }
+
+        // FIX 6: Static flow buttons grouped by category
+        function renderStaticFlowButtons() {
+            const container = document.getElementById('flow-buttons');
+            
+            const flowGroups = {
+                'Lean DB': [
+                    { name: 'lean_sorry_scan', desc: 'Scan for sorry statements', icon: 'search' },
+                    { name: 'lean_float_scan', desc: 'Floating symbols query', icon: 'ghost' },
+                    { name: 'lean_file_interconnect', desc: 'File dependencies', icon: 'project-diagram' },
+                    { name: 'lean_db_health', desc: 'Database health', icon: 'heartbeat' },
+                    { name: 'quick_proof_report', desc: 'Proof status report', icon: 'file-alt' },
+                    { name: 'lean_proof_audit', desc: 'Proof map audit (summary)', icon: 'clipboard-list' },
+                    { name: 'lean_millennium_paths', desc: 'Millennium dependency paths', icon: 'route' },
+                    { name: 'lean_cohesion_ranking', desc: 'Module cohesion ranking', icon: 'chart-line' }
+                ],
+                'TPH GPU': [
+                    { name: 'tph_inference', desc: 'TPH model inference', icon: 'brain' },
+                    { name: 'tph_status', desc: 'TPH server status', icon: 'server' }
+                ],
+                'System': [
+                    { name: 'env_check', desc: 'Python environment', icon: 'check-circle' },
+                    { name: 'gpu_check', desc: 'AMD GPU status', icon: 'microchip' }
+                ],
+                'Research': [
+                    { name: 'formula_match', desc: 'DynamicFlux formula match', icon: 'calculator' },
+                    { name: 'wolfram_verify', desc: 'Wolfram verification', icon: 'flask' },
+                    { name: 'lean_diff_mathlib', desc: 'Mathlib comparison', icon: 'code-branch' }
+                ]
+            };
+            
+            let html = '<div style="opacity: 0.7;">';
+            for (const [groupName, flows] of Object.entries(flowGroups)) {
+                html += `<div class="flow-group-title">${groupName}</div>`;
+                flows.forEach(flow => {
+                    html += `
+                        <button class="flow-btn" onclick="runFlow('${flow.name}')" id="flow-${flow.name}" disabled>
+                            <i class="fas fa-${flow.icon}"></i>
+                            <span>${flow.desc}</span>
+                        </button>
+                    `;
+                });
+            }
+            html += '<div style="margin-top: 15px; font-size: 0.8em; color: #888; text-align: center;">';
+            html += '<i class="fas fa-info-circle"></i> Static fallback — server offline';
+            html += '</div></div>';
+            
+            container.innerHTML = html;
+        }
+
+        function setFlowDefinitions(flows) {
+            flowDefinitionsByName = new Map((flows || []).map(flow => {
+                const paramsSchema = typeof flow.params_schema === 'string'
+                    ? safeParseJson(flow.params_schema, {})
+                    : (flow.params_schema || {});
+                return [flow.name, { ...flow, params_schema: paramsSchema }];
+            }));
+        }
+
+        function getDefaultFlowParams(flowName) {
+            const flow = flowDefinitionsByName.get(flowName);
+            const properties = flow?.params_schema?.properties || {};
+            const defaults = {};
+            for (const [key, config] of Object.entries(properties)) {
+                if (config && Object.prototype.hasOwnProperty.call(config, 'default')) {
+                    defaults[key] = config.default;
+                }
+            }
+            return defaults;
+        }
+
+        function renderFlows(flows) {
+            const container = document.getElementById('flow-buttons');
+            if (flows.length === 0) {
+                renderStaticFlowButtons();
+                return;
+            }
+
+            // Group flows by category based on tags
+            const flowsByCategory = {
+                'Lean DB': [],
+                'TPH GPU': [],
+                'System': [],
+                'Research': []
+            };
+            
+            flows.forEach(flow => {
+                if (flow.tags.includes('lean')) {
+                    flowsByCategory['Lean DB'].push(flow);
+                } else if (flow.tags.includes('tph') || flow.tags.includes('gpu')) {
+                    flowsByCategory['TPH GPU'].push(flow);
+                } else if (flow.tags.includes('env') || flow.tags.includes('diagnostics')) {
+                    flowsByCategory['System'].push(flow);
+                } else {
+                    flowsByCategory['Research'].push(flow);
+                }
+            });
+
+            let html = '';
+            for (const [category, categoryFlows] of Object.entries(flowsByCategory)) {
+                if (categoryFlows.length > 0) {
+                    html += `<div class="flow-group-title">${escapeHtml(category)}</div>`;
+                    categoryFlows.forEach(flow => {
+                        const icon = getFlowIcon(flow.name);
+                        // SECURITY FIX: Use data-flow-name attribute (no inline onclick) and
+                        // escapeHtml on all server-supplied strings to prevent stored XSS.
+                        html += `
+                            <button class="flow-btn" data-flow-name="${escapeHtml(flow.name)}" id="flow-${escapeHtml(flow.name)}">
+                                <i class="fas fa-${escapeHtml(icon)}"></i>
+                                <span>${escapeHtml(flow.description)}</span>
+                            </button>
+                        `;
+                    });
+                }
+            }
+            
+            container.innerHTML = html;
+
+            // SECURITY FIX: Attach click handlers via addEventListener rather than
+            // inline onclick so malicious flow.name values cannot execute JS.
+            container.querySelectorAll('.flow-btn[data-flow-name]').forEach(btn => {
+                btn.addEventListener('click', () => runFlow(btn.dataset.flowName));
+            });
+        }
+
+        function getFlowIcon(flowName) {
+            const icons = {
+                'lean_sorry_scan': 'search',
+                'lean_float_scan': 'ghost',
+                'lean_file_interconnect': 'project-diagram',
+                'lean_db_health': 'heartbeat',
+                'quick_proof_report': 'file-alt',
+                'lean_proof_audit': 'clipboard-list',
+                'lean_millennium_paths': 'route',
+                'lean_cohesion_ranking': 'chart-line',
+                'lean_diff_mathlib': 'code-branch',
+                'tph_inference': 'brain',
+                'tph_status': 'server',
+                'env_check': 'check-circle',
+                'gpu_check': 'microchip',
+                'formula_match': 'calculator',
+                'wolfram_verify': 'flask'
+            };
+            return icons[flowName] || 'cog';
+        }
+
+        async function runFlow(flowName) {
+            if (activeFlow) {
+                logMessage('error', 'Another flow is already running. Please wait...');
+                return;
+            }
+
+            activeFlow = flowName;
+            const btn = document.getElementById(`flow-${flowName}`);
+            btn.classList.add('running');
+            btn.disabled = true;
+            
+            // FIX 3: Add connection status indicator
+            updateConnectionStatus(flowName, 'connected');
+
+            clearLog();
+            logMessage('info', `[START] Flow: ${flowName}`);
+
+            try {
+                // SECURITY FIX (Finding 7): EventSource is GET-only but server requires POST.
+                // Use fetch() + ReadableStream to enable POST-based SSE streaming.
+                const resp = await fetch(`${API_BASE}/run/flow/${flowName}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+                    body: JSON.stringify({ input: getDefaultFlowParams(flowName) }),
+                });
+
+                if (!resp.ok) {
+                    logMessage('error', `[ERROR] Server returned ${resp.status}: ${resp.statusText}`);
+                    stopFlow(flowName);
+                    return;
+                }
+
+                const reader = resp.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                // Store reader so stopFlow() can cancel it
+                eventSource = { close: () => reader.cancel() };
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+
+                    // Parse SSE frames from buffer
+                    const frames = buffer.split('\n\n');
+                    buffer = frames.pop(); // keep incomplete last frame
+
+                    for (const frame of frames) {
+                        let eventType = 'message', dataStr = '';
+                        for (const line of frame.split('\n')) {
+                            if (line.startsWith('event: ')) eventType = line.slice(7).trim();
+                            if (line.startsWith('data: ')) dataStr = line.slice(6);
+                        }
+                        if (!dataStr) continue;
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (eventType === 'log') {
+                                logMessage(data.level || 'info', data.message || dataStr);
+                            } else if (eventType === 'result') {
+                                logMessage('info', `[OK] Flow completed. Ticket ID: ${data.ticket_id}`);
+                                loadTickets();
+                            } else if (eventType === 'done') {
+                                logMessage('info', `[DONE] Duration: ${data.duration_ms}ms`);
+                                stopFlow(flowName);
+                                return;
+                            } else if (eventType === 'error') {
+                                logMessage('error', `[FAIL] ${data.message || 'Flow error'}`);
+                                stopFlow(flowName);
+                                return;
+                            }
+                        } catch { logMessage('info', dataStr); }
+                    }
+                }
+                stopFlow(flowName);
+
+            } catch (e) {
+                logMessage('error', `Failed to start flow: ${escapeHtml(e.message)}`);
+                stopFlow(flowName);
+            }
+        }
+
+        function stopFlow(flowName) {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            const btn = document.getElementById(`flow-${flowName}`);
+            if (btn) {
+                btn.classList.remove('running');
+                btn.disabled = false;
+            }
+            
+            // FIX 3: Update connection status to disconnected
+            updateConnectionStatus(flowName, 'disconnected');
+
+            activeFlow = null;
+        }
+
+        // FIX 3: Connection status display
+        function updateConnectionStatus(flowName, status) {
+            const btn = document.getElementById(`flow-${flowName}`);
+            if (!btn) return;
+            
+            // Remove existing status badge
+            const existingBadge = btn.querySelector('.connection-status');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add new status badge during execution
+            if (status === 'connected') {
+                const badge = document.createElement('span');
+                badge.className = 'connection-status connected';
+                badge.innerHTML = '<span class="connection-dot"></span>Live';
+                btn.appendChild(badge);
+            }
+        }
+
+        // ====================================================================
+        // Log Panel
+        // ====================================================================
+
+        function logMessage(level, message) {
+            const panel = document.getElementById('log-panel');
+            
+            // Remove empty state if present
+            const emptyState = panel.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${level}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            panel.appendChild(entry);
+
+            // Auto-scroll to bottom
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function clearLog() {
+            const panel = document.getElementById('log-panel');
+            panel.innerHTML = '';
+        }
+
+        // ====================================================================
+        // Tickets Panel
+        // ====================================================================
+
+        // FIX 4: Auto-refresh toggle
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('auto-refresh-toggle');
+            
+            if (autoRefreshInterval) {
+                // Disable auto-refresh
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-clock"></i> Auto-refresh';
+            } else {
+                // Enable auto-refresh every 30 seconds
+                autoRefreshInterval = setInterval(() => {
+                    loadTickets(true); // Pass true to indicate auto-refresh
+                }, 30000);
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Auto (30s)';
+            }
+        }
+
+        async function loadTickets(isAutoRefresh = false) {
+            try {
+                const resp = await fetch(`${API_BASE}/tickets?limit=50`);
+                const data = await resp.json();
+                
+                // FIX 4: Detect new tickets and flash them
+                const newTicketIds = new Set(data.tickets.map(t => t.id));
+                const addedTickets = isAutoRefresh 
+                    ? [...newTicketIds].filter(id => !lastTicketIds.has(id))
+                    : [];
+                
+                lastTicketIds = newTicketIds;
+                
+                renderTickets(data.tickets || [], addedTickets);
+            } catch (e) {
+                console.error('Failed to load tickets:', e);
+            }
+        }
+
+        function renderTickets(tickets, newTicketIds = []) {
+            const container = document.getElementById('tickets-container');
+            
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No results yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.map(ticket => {
+                // FIX 4: Add flash class to new tickets
+                const isNew = newTicketIds.includes(ticket.id);
+                // SECURITY FIX: ticket.id is a ULID (alphanumeric only) — safe for onclick/id.
+                // ticket.flow_name comes from handleCreateTicket which accepts arbitrary user
+                // input, so it MUST be HTML-escaped to prevent stored XSS.
+                const safeId       = ticket.id.replace(/[^0-9A-Za-z]/g, '');
+                const safeFlowName = escapeHtml(ticket.flow_name);
+                const safeStatus   = escapeHtml(ticket.status);
+                return `
+                    <div class="ticket-item ${isNew ? 'new-flash' : ''}" onclick="toggleTicket('${safeId}', this)">
+                        <div class="ticket-header">
+                            <div class="ticket-flow-name">${safeFlowName}</div>
+                            <div class="ticket-status ${safeStatus}">${safeStatus}</div>
+                        </div>
+                        <div class="ticket-meta">
+                            ID: ${escapeHtml(ticket.id.substring(0, 12))}...
+                            <br>
+                            ${new Date(ticket.created_at * 1000).toLocaleString()}
+                        </div>
+                        <div class="ticket-content" id="ticket-content-${safeId}">
+                            <div class="spinner"></div> Loading...
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function toggleTicket(ticketId, ticketItem) {
+            const content = document.getElementById(`ticket-content-${ticketId}`);
+
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                ticketItem.classList.remove('expanded');
+            } else {
+                // Load full ticket data
+                try {
+                    const resp = await fetch(`${API_BASE}/ticket/${ticketId}`);
+                    const ticket = await resp.json();
+                    
+                    // FIX 5: JSON syntax highlighting
+                    // output_json may be a string or already-parsed object
+                    const parsed = safeParseJson(ticket.output_json, ticket.output_json);
+                    const outputJson = JSON.stringify(parsed, null, 2);
+                    const summaryHtml = formatTicketSummary(parsed);
+                    const highlightedJson = syntaxHighlightJson(outputJson);
+                    content.innerHTML = `${summaryHtml}<pre>${highlightedJson}</pre>`;
+                    content.classList.add('show');
+                    ticketItem.classList.add('expanded');
+                } catch (e) {
+                    // SECURITY FIX: escape e.message before inserting into innerHTML
+                    content.innerHTML = `<pre>Error loading ticket: ${escapeHtml(e.message)}</pre>`;
+                    content.classList.add('show');
+                }
+            }
+        }
+
+        // SECURITY FIX: HTML-escape helper — prevents stored XSS when inserting
+        // server-supplied strings into innerHTML / attribute contexts.
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(String(str)));
+            return div.innerHTML;
+        }
+
+        // FIX 5: Simple JSON syntax highlighting without external libraries
+        function safeParseJson(value, fallback = null) {
+            if (typeof value !== 'string') {
+                return value ?? fallback;
+            }
+
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                console.warn('Failed to parse JSON payload:', e);
+                return fallback;
+            }
+        }
+
+        function syntaxHighlightJson(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function formatTicketSummary(payload) {
+            const sections = summarizePayload(payload);
+            if (sections.length === 0) return '';
+
+            return `
+                <div class="ticket-summary">
+                    ${sections.map(section => `
+                        <div class="ticket-summary-section">
+                            <div class="flow-group-title">${escapeHtml(section.title)}</div>
+                            ${section.lines.map(line => `<div>${escapeHtml(line)}</div>`).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function summarizePayload(payload) {
+            const output = payload?.output_json ? safeParseJson(payload.output_json, payload.output_json) : payload;
+            const result = output?.result || output;
+            const sections = [];
+
+            if (result?.ticket) {
+                sections.push({
+                    title: 'Ticket',
+                    lines: [
+                        `Title: ${result.ticket.title || 'untitled'}`,
+                        `Type: ${result.ticket.type || 'unknown'}`,
+                        `Created: ${result.ticket.created_at || 'unknown'}`
+                    ]
+                });
+            }
+
+            if (result?.audit) {
+                sections.push({
+                    title: 'Audit Summary',
+                    lines: [
+                        `Lean files found: ${result.audit.ActualSrcFiles ?? 'unknown'}`,
+                        `Documented entries: ${result.audit.DocumentedEntries ?? 'unknown'}`,
+                        `Missing in proof map: ${result.audit.MissingInDoc ?? 'unknown'}`,
+                        `Import mismatches: ${result.audit.MismatchCount ?? 'unknown'}`
+                    ]
+                });
+            }
+
+            if (result?.paths) {
+                const offPath = result.paths.ModulesOffMillenniumPath || [];
+                sections.push({
+                    title: 'Dependency Path Check',
+                    lines: [
+                        `Target: ${result.paths.Target || 'unknown'}`,
+                        `Closure size: ${result.paths.DependencyClosureSize ?? 'unknown'}`,
+                        `Path count: ${result.paths.PathCountToMillennium ?? 'unknown'}`,
+                        `All modules reach target: ${result.paths.AllModulesReachMillennium ? 'yes' : 'no'}`,
+                        `Modules off target path: ${offPath.length}`
+                    ]
+                });
+            }
+
+            if (Array.isArray(result?.ranking)) {
+                sections.push({
+                    title: 'Cohesion Ranking',
+                    lines: result.ranking.slice(0, 5).map((item, index) =>
+                        `${index + 1}. ${item.File || 'unknown'} score=${item.Score ?? 'unknown'}`
+                    )
+                });
+            }
+
+            if (result?.tensor_extract) {
+                const candidates = result.tensor_extract.candidate_modules || [];
+                sections.push({
+                    title: 'TorchLean Tensor Readiness',
+                    lines: [
+                        `Status: ${result.tensor_extract.status || 'unknown'}`,
+                        `Candidate modules: ${candidates.length}`
+                    ]
+                });
+            }
+
+            if (Array.isArray(result?.readable_summary)) {
+                sections.push({ title: 'Badge Summary', lines: result.readable_summary });
+            }
+
+            return sections;
+        }
+
+        // ====================================================================
+        // LLM Chat Panel
+        // ====================================================================
+
+        let chatMessages = [];
+        let currentStreamReader = null;
+        let contextRefreshInterval = null;
+
+        function initLLMChat() {
+            // Load models on tab show
+            document.getElementById('agent-tab').addEventListener('shown.bs.tab', () => {
+                loadModels();
+                // Auto-refresh context every 30 seconds if panel is visible
+                if (!contextRefreshInterval && document.getElementById('context-panel-container').style.display !== 'none') {
+                    startContextRefresh();
+                }
+            });
+
+            // Event listeners
+            document.getElementById('send-btn').addEventListener('click', sendMessage);
+            document.getElementById('stop-btn').addEventListener('click', stopGeneration);
+            document.getElementById('clear-chat-btn').addEventListener('click', clearChat);
+            document.getElementById('context-btn').addEventListener('click', toggleContextPanel);
+            
+            // Keyboard shortcuts
+            document.getElementById('chat-input').addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                } else if (e.key === 'Escape') {
+                    stopGeneration();
+                }
+            });
+        }
+
+        async function loadModels() {
+            const selector = document.getElementById('model-selector');
+            try {
+                const resp = await fetch(`${API_BASE}/api/llm/models`);
+                const data = await resp.json();
+                
+                if (data.models && data.models.length > 0) {
+                    selector.innerHTML = data.models.map(model => 
+                        `<option value="${escapeHtml(model)}" ${model === data.default ? 'selected' : ''}>
+                            ${escapeHtml(model)}
+                        </option>`
+                    ).join('');
+                } else {
+                    // Fallback to default models
+                    selector.innerHTML = `
+                        <option value="qwen2.5-coder:32b-instruct" selected>qwen2.5-coder:32b-instruct</option>
+                        <option value="gemma31b-local:latest">gemma31b-local:latest</option>
+                        <option value="deepseek-r1:70b">deepseek-r1:70b</option>
+                        <option value="mistral:latest">mistral:latest</option>
+                    `;
+                }
+            } catch (e) {
+                console.error('Failed to load models:', e);
+                selector.innerHTML = '<option value="qwen2.5-coder:32b-instruct">qwen2.5-coder:32b-instruct (fallback)</option>';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addChatMessage('user', message);
+            chatMessages.push({ role: 'user', content: message });
+            input.value = '';
+
+            // Show typing indicator
+            const typingIndicator = addTypingIndicator();
+
+            // Disable send button, show stop button
+            document.getElementById('send-btn').style.display = 'none';
+            document.getElementById('stop-btn').style.display = 'block';
+
+            try {
+                const model = document.getElementById('model-selector').value;
+                const injectContext = document.getElementById('inject-context-checkbox').checked;
+
+                const resp = await fetch(`${API_BASE}/api/llm/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: chatMessages,
+                        inject_context: injectContext
+                    })
+                });
+
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+                }
+
+                // Remove typing indicator
+                typingIndicator.remove();
+
+                // Start streaming response
+                const reader = resp.body.getReader();
+                currentStreamReader = reader;
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let assistantMessage = '';
+                let assistantBubble = null;
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+
+                    // Parse SSE frames
+                    const frames = buffer.split('\n\n');
+                    buffer = frames.pop();
+
+                    for (const frame of frames) {
+                        let eventType = 'message', dataStr = '';
+                        for (const line of frame.split('\n')) {
+                            if (line.startsWith('event: ')) eventType = line.slice(7).trim();
+                            if (line.startsWith('data: ')) dataStr = line.slice(6);
+                        }
+                        if (!dataStr) continue;
+
+                        try {
+                            const data = JSON.parse(dataStr);
+                            
+                            if (eventType === 'token') {
+                                assistantMessage += data.content || '';
+                                if (!assistantBubble) {
+                                    assistantBubble = addChatMessage('assistant', assistantMessage);
+                                } else {
+                                    updateChatMessage(assistantBubble, assistantMessage);
+                                }
+                                scrollChatToBottom();
+                            } else if (eventType === 'done') {
+                                chatMessages.push({ role: 'assistant', content: assistantMessage });
+                                
+                                // Check for flow triggers
+                                checkForFlowTriggers(assistantBubble, assistantMessage);
+                                break;
+                            } else if (eventType === 'error') {
+                                addChatMessage('error', `Error: ${data.message || 'Unknown error'}`);
+                                break;
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse SSE data:', e);
+                        }
+                    }
+                }
+            } catch (e) {
+                typingIndicator.remove();
+                addChatMessage('error', `Failed to send message: ${escapeHtml(e.message)}`);
+            } finally {
+                currentStreamReader = null;
+                document.getElementById('send-btn').style.display = 'block';
+                document.getElementById('stop-btn').style.display = 'none';
+            }
+        }
+
+        function stopGeneration() {
+            if (currentStreamReader) {
+                currentStreamReader.cancel();
+                currentStreamReader = null;
+                addChatMessage('error', 'Generation stopped by user');
+                document.getElementById('send-btn').style.display = 'block';
+                document.getElementById('stop-btn').style.display = 'none';
+            }
+        }
+
+        function addChatMessage(role, content) {
+            const container = document.getElementById('chat-messages');
+            
+            // Remove empty state
+            const emptyState = container.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${role}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            
+            if (role === 'user' || role === 'error') {
+                bubble.textContent = content;
+            } else if (role === 'assistant') {
+                // Render markdown using marked.js
+                bubble.innerHTML = marked.parse(content);
+            }
+            
+            messageDiv.appendChild(bubble);
+            container.appendChild(messageDiv);
+            scrollChatToBottom();
+            
+            return bubble;
+        }
+
+        function updateChatMessage(bubble, content) {
+            bubble.innerHTML = marked.parse(content);
+        }
+
+        function addTypingIndicator() {
+            const container = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message assistant';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(messageDiv);
+            scrollChatToBottom();
+            return messageDiv;
+        }
+
+        function scrollChatToBottom() {
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearChat() {
+            chatMessages = [];
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <p>Start a conversation with the debug agent...</p>
+                </div>
+            `;
+        }
+
+        function checkForFlowTriggers(bubble, content) {
+            // Parse content for "FLOW: flow_name" pattern
+            const flowMatch = content.match(/FLOW:\s*(\w+)/);
+            if (flowMatch) {
+                const flowName = flowMatch[1];
+                const button = document.createElement('button');
+                button.className = 'flow-trigger-btn';
+                button.innerHTML = `<i class="fas fa-play"></i> Run ${escapeHtml(flowName)}`;
+                button.addEventListener('click', () => {
+                    // Switch to flows tab and run the flow
+                    document.getElementById('flows-tab').click();
+                    setTimeout(() => runFlow(flowName), 100);
+                });
+                bubble.parentElement.appendChild(button);
+            }
+        }
+
+        async function toggleContextPanel() {
+            const panel = document.getElementById('context-panel-container');
+            const btn = document.getElementById('context-btn');
+            
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-cog fa-spin"></i> Loading...';
+                await loadContext();
+                btn.innerHTML = '<i class="fas fa-cog"></i> Context';
+                startContextRefresh();
+            } else {
+                panel.style.display = 'none';
+                stopContextRefresh();
+            }
+        }
+
+        async function loadContext() {
+            const content = document.getElementById('context-content');
+            try {
+                const resp = await fetch(`${API_BASE}/api/llm/context`);
+                const data = await resp.json();
+                const formatted = JSON.stringify(data, null, 2);
+                const highlighted = syntaxHighlightJson(formatted);
+                content.innerHTML = `<pre>${highlighted}</pre>`;
+            } catch (e) {
+                content.innerHTML = `<pre>Error loading context: ${escapeHtml(e.message)}</pre>`;
+            }
+        }
+
+        function startContextRefresh() {
+            if (contextRefreshInterval) return;
+            contextRefreshInterval = setInterval(() => {
+                if (document.getElementById('context-panel-container').style.display !== 'none') {
+                    loadContext();
+                }
+            }, 30000);
+        }
+
+        function stopContextRefresh() {
+            if (contextRefreshInterval) {
+                clearInterval(contextRefreshInterval);
+                contextRefreshInterval = null;
+            }
+        }
+    </script>
+
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

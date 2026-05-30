@@ -1,0 +1,112 @@
+/* Layout & General Component Styling */
+:root {
+    --bg-dark: #080a10;
+    --sidebar-bg: #0c0e1a;
+    --panel-bg: rgba(17, 22, 39, 0.7);
+    --border-glow: rgba(0, 198, 255, 0.15);
+    --accent-cyan: #00c6ff;
+    --accent-blue: #0072ff;
+    --accent-purple: #9b59b6;
+    --success-green: #2ecc71;
+    --warning-yellow: #f1c40f;
+    --error-red: #e74c3c;
+    --text-light: #e1e4ed;
+    --text-muted: #8fa0c0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Outfit', 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 3D Glassmorphism Panel styles */
+.glass-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+    border-color: rgba(0, 198, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 198, 255, 0.08);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+}
+
+.panel-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+/* App Main Grid Layout */
+.app-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Main Scrollable Content area */
+.app-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbars styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.01);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 198, 255, 0.3);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}

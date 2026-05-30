@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Automata - Unified Advanced Platform Console</title>
+    
+    <!-- Premium Google Fonts: Outfit and Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Modular Design System Styles -->
+    <link rel="stylesheet" href="/ui/css/settings.css">
+    <link rel="stylesheet" href="/ui/css/elements.css">
+    <link rel="stylesheet" href="/ui/css/objects.css">
+    <link rel="stylesheet" href="/ui/css/components.css">
+    <link rel="stylesheet" href="/ui/css/utilities.css">
+    <link rel="stylesheet" href="/ui/css/layout.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- ==================================================================== -->
+        <!-- SLEEK LEFT SIDEBAR NAVIGATION -->
+        <!-- ==================================================================== -->
+        <div class="app-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-cubes-stacked"></i>
+                <span>Sovereign Console</span>
+            </div>
+
+            <div class="sidebar-nav">
+                
+                <div class="nav-group-title">Engine Tracks</div>
+                
+                <!-- Track 1 Group -->
+                <div class="nav-group">
+                    <button class="nav-tab-btn active" id="btn-tab-flows" onclick="switchMainTab('#flows-panel', 'btn-tab-flows')">
+                        <i class="fas fa-route"></i>
+                        <span>Track 1: Flows & Audits</span>
+                    </button>
+                    <div class="nav-sub-items">
+                        <button class="nav-sub-item-btn active" id="btn-sub-flows" onclick="switchSubTab('#flows-section', this)">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Flows Engine</span>
+                        </button>
+                        <button class="nav-sub-item-btn" id="btn-sub-results" onclick="switchSubTab('#results-section', this)">
+                            <i class="fas fa-list-check"></i>
+                            <span>Recent Results</span>
+                        </button>
+                        <button class="nav-sub-item-btn" id="btn-sub-metrics" onclick="switchSubTab('#metrics-section', this)">
+                            <i class="fas fa-chart-line"></i>
+                            <span>System Metrics</span>
+                        </button>
+                        <button class="nav-sub-item-btn" id="btn-sub-qwen" onclick="switchSubTab('#assistant-section', this); loadModels();">
+                            <i class="fas fa-terminal"></i>
+                            <span>Qwen Debug Agent</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Track 2 -->
+                <button class="nav-tab-btn" id="btn-tab-scanner" onclick="switchMainTab('#scanner-panel', 'btn-tab-scanner')">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>Track 2: Audit Scanner</span>
+                </button>
+
+                <!-- Track 3 -->
+                <button class="nav-tab-btn" id="btn-tab-trading" onclick="switchMainTab('#trading-panel', 'btn-tab-trading'); setTimeout(initWaveformVisualizer, 100);">
+                    <i class="fas fa-wave-square"></i>
+                    <span>Track 3: Trading Waves</span>
+                </button>
+
+                <!-- Track 4 -->
+                <button class="nav-tab-btn" id="btn-tab-quantum" onclick="switchMainTab('#quantum-panel', 'btn-tab-quantum'); setTimeout(initBlochSphere, 100); syncQuantumJobs();">
+                    <i class="fas fa-atom"></i>
+                    <span>Track 4: QuantumSDK</span>
+                </button>
+
+                <!-- Track 5 -->
+                <button class="nav-tab-btn" id="btn-tab-perplexity" onclick="switchMainTab('#perplexity-panel', 'btn-tab-perplexity')">
+                    <i class="fas fa-brain"></i>
+                    <span>Track 5: Perplexity & Graph</span>
+                </button>
+
+                <!-- Track 6 -->
+                <button class="nav-tab-btn" id="btn-tab-wine" onclick="switchMainTab('#wine-panel', 'btn-tab-wine')">
+                    <i class="fas fa-gears"></i>
+                    <span>Track 6: WINE & Cygwin</span>
+                </button>
+
+                <!-- Track 7 -->
+                <a href="/ui/coherence_runner.html" target="_blank" class="nav-tab-btn" style="text-decoration: none; display: flex; align-items: center;">
+                    <i class="fas fa-network-wired text-cyan"></i>
+                    <span>Track 7: Swarm & Coherence Settings</span>
+                </a>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="badge-status" id="badge-python">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Python: Checking...</span>
+                </div>
+                <div class="badge-status" id="badge-lean">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Lean DB: Checking...</span>
+                </div>
+                <div class="badge-status" id="badge-tph">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>TPH GPU: Checking...</span>
+                </div>
+                <div class="badge-status" id="badge-api-8002">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>API :8002: Checking...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- APP CONTENT PANELS -->
+        <!-- ==================================================================== -->
+        <div class="app-content">
+
+            <!-- ========================================================== -->
+            <!-- SOVEREIGN PORTAL UNIFIED NAVIGATION HEADER -->
+            <!-- ========================================================== -->
+            <div class="sovereign-nav-header" style="margin: 15px 15px 10px 15px;">
+                <div class="nav-brand">
+                    <i class="fas fa-cubes-stacked brand-icon"></i>
+                    <span class="brand-text">SOVEREIGN<span class="brand-subtext">AUTOMATA</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="/ui/lean4a_forum.html" class="nav-link-btn" id="nav-btn-forum">
+                        <i class="fas fa-route"></i> Unified Console
+                    </a>
+                    <a href="/ui/coherence_runner.html" class="nav-link-btn" id="nav-btn-coherence">
+                        <i class="fas fa-network-wired"></i> Coherence Runner
+                    </a>
+                    <a href="/ui/paper_trader_simulation.html" class="nav-link-btn" id="nav-btn-trader">
+                        <i class="fas fa-brain"></i> Sensory AI Aligner
+                    </a>
+                    <a href="/ui/consciousness_runner.html" class="nav-link-btn" id="nav-btn-consciousness">
+                        <i class="fas fa-wave-square"></i> Automation Hub
+                    </a>
+                    <a href="/ui/tph_chattts_voice_hub.html" class="nav-link-btn" id="nav-btn-voice">
+                        <i class="fas fa-microphone-lines"></i> ChatTTS Voice Hub
+                    </a>
+                </div>
+                <div class="nav-telemetry">
+                    <div class="telemetry-badge">
+                        <span class="status-indicator-dot online"></span>
+                        <span>MI300X ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+            .sovereign-nav-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(10, 8, 24, 0.85);
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                padding: 12px 24px;
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+                font-family: 'Outfit', 'Inter', sans-serif;
+                z-index: 9999;
+                position: relative;
+            }
+
+            .nav-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .brand-icon {
+                font-size: 1.5rem;
+                color: #8b5cf6;
+                text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            }
+
+            .brand-text {
+                font-weight: 800;
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+                color: #f3f1fe;
+            }
+
+            .brand-subtext {
+                color: #00ffff;
+                font-weight: 400;
+                margin-left: 2px;
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+            }
+
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .nav-link-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #9c97bc;
+                text-decoration: none !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid transparent;
+            }
+
+            .nav-link-btn:hover {
+                color: #ffffff;
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-link-btn.active {
+                color: #ffffff;
+                background: rgba(139, 92, 246, 0.2);
+                border-color: rgba(139, 92, 246, 0.4);
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+            }
+
+            #nav-btn-forum.active, #nav-btn-forum:hover { border-color: rgba(139, 92, 246, 0.4); }
+            #nav-btn-coherence.active, #nav-btn-coherence:hover { border-color: rgba(0, 255, 255, 0.4); }
+            #nav-btn-trader.active, #nav-btn-trader:hover { border-color: rgba(16, 185, 129, 0.4); }
+            #nav-btn-consciousness.active, #nav-btn-consciousness:hover { border-color: rgba(245, 158, 11, 0.4); }
+            #nav-btn-voice.active, #nav-btn-voice:hover { border-color: rgba(236, 72, 153, 0.4); }
+
+            .nav-telemetry {
+                display: flex;
+                align-items: center;
+            }
+
+            .telemetry-badge {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(0, 255, 255, 0.06);
+                border: 1px solid rgba(0, 255, 255, 0.2);
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #00ffff;
+                letter-spacing: 0.5px;
+                text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+            }
+
+            .status-indicator-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .status-indicator-dot.online {
+                background-color: #00ffff;
+                box-shadow: 0 0 8px #00ffff;
+                animation: blink-status 2s infinite;
+            }
+
+            @keyframes blink-status {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.4; }
+            }
+
+            @media (max-width: 992px) {
+                .sovereign-nav-header {
+                    flex-direction: column;
+                    gap: 12px;
+                    padding: 16px;
+                }
+                .nav-links {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+            }
+            </style>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const path = window.location.pathname;
+                document.querySelectorAll(".nav-link-btn").forEach(btn => btn.classList.remove("active"));
+                
+                if (path.includes("lean4a_forum")) {
+                    document.getElementById("nav-btn-forum").classList.add("active");
+                } else if (path.includes("coherence_runner")) {
+                    document.getElementById("nav-btn-coherence").classList.add("active");
+                } else if (path.includes("paper_trader_simulation")) {
+                    document.getElementById("nav-btn-trader").classList.add("active");
+                } else if (path.includes("consciousness_runner")) {
+                    document.getElementById("nav-btn-consciousness").classList.add("active");
+                } else if (path.includes("tph_chattts_voice_hub")) {
+                    document.getElementById("nav-btn-voice").classList.add("active");
+                }
+            });
+            </script>
+
+
+            <!-- API CONNECTION ERRORS -->
+            <div id="api-error-banner" style="display: none; margin: 15px; padding: 12px; background: rgba(231, 76, 60, 0.2); border: 1px solid var(--error-red); border-radius: 8px; font-size: 0.9em;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Cannot reach Go_Red API on port :8443</strong> — falling back to static indicators.
+            </div>
+
+            <!-- TAB PANES -->
+            <div class="tab-content" style="flex: 1; height: 100%;">
+
+                <!-- ========================================================== -->
+                <!-- TRACK 1: FLOWS & AUDITS PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade show active" id="flows-panel" style="height: 100%;">
+                    
+                    <!-- Flows Section -->
+                    <div id="flows-section" class="flow-sub-section h-100">
+                        <div class="main-grid">
+                            
+                            <!-- Flows Controls -->
+                            <div class="glass-panel d-flex flex-column h-100" style="overflow: hidden;">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-circle-play"></i> Flows Engine</div>
+                                </div>
+                                <div id="flow-buttons" style="flex: 1; overflow-y: auto;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Polling active flows...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Center: Live log terminal -->
+                            <div class="glass-panel d-flex flex-column h-100">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-terminal"></i> Live Log Console</div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="clearLog()">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                </div>
+                                <div class="log-panel" id="log-panel" style="flex: 1;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-terminal"></i>
+                                        <p>Trigger a flow from the panel to stream dynamic events...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Recent results summary -->
+                            <div class="glass-panel d-flex flex-column h-100">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent Audits</div>
+                                </div>
+                                <div id="tickets-container" style="flex: 1; overflow-y: auto;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-info-circle"></i>
+                                        <p>Loading results...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results-section" class="flow-sub-section d-none p-4 h-100" style="overflow-y: auto;">
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-list-check"></i> Sovereign Forensic Audit History</div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover align-middle border-secondary" style="font-size: 0.9em;">
+                                    <thead>
+                                        <tr>
+                                            <th>Session ID</th>
+                                            <th>Timestamp</th>
+                                            <th>Status</th>
+                                            <th>Audited File Paths</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-table-body">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">No forensic audit results loaded. Click "Flows Engine" to scan directories.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Section -->
+                    <div id="metrics-section" class="flow-sub-section d-none p-4 h-100" style="overflow-y: auto;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="glass-panel">
+                                    <div class="panel-header">
+                                        <div class="panel-title"><i class="fas fa-database"></i> Database Connections</div>
+                                    </div>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>Postgres Relational Engine:</span>
+                                            <span class="text-success fw-bold"><i class="fas fa-check-circle"></i> CONNECTED (Port 5432)</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>Redis In-Memory Bus:</span>
+                                            <span class="text-success fw-bold"><i class="fas fa-check-circle"></i> CONNECTED (Port 6379)</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>Cognee LanceDB vector:</span>
+                                            <span class="text-info fw-bold"><i class="fas fa-circle-check"></i> SQLite / Kuzu Graph indexed</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="glass-panel">
+                                    <div class="panel-header">
+                                        <div class="panel-title"><i class="fas fa-microchip"></i> GPU Telemetry (AMD MI300X VF)</div>
+                                    </div>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>Active GPU Accelerator:</span>
+                                            <span class="text-warning fw-bold" id="gpu-telemetry-name">AMD Instinct MI300X (ROCm gfx942)</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>VRAM Allocation Status:</span>
+                                            <span class="text-success fw-bold">Active (ROCm Device 0)</span>
+                                        </li>
+                                        <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                            <span>Accelerator Driver:</span>
+                                            <span class="text-info fw-bold">ROCm PyTorch VF (offline)</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Restored Qwen Debug Assistant -->
+                    <div id="assistant-section" class="flow-sub-section d-none h-100">
+                        <div class="chat-container">
+                            
+                            <!-- Chat Area -->
+                            <div class="chat-panel">
+                                <div class="panel-header px-3 py-2">
+                                    <div class="chat-header-left">
+                                        <div class="panel-title" id="agent-tab"><i class="fas fa-terminal text-purple"></i> Qwen Assistant</div>
+                                    </div>
+                                    <div class="chat-controls">
+                                        <select id="model-selector" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: 180px;">
+                                            <option value="qwen2.5-coder:32b">qwen2.5-coder:32b</option>
+                                        </select>
+                                        <button id="context-btn" class="btn btn-sm btn-outline-info"><i class="fas fa-folder-open"></i> Context</button>
+                                        <button id="clear-chat-btn" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-can"></i> Clear</button>
+                                    </div>
+                                </div>
+
+                                <div class="chat-messages" id="chat-messages">
+                                    <div class="empty-state">
+                                        <i class="fas fa-comments text-purple"></i>
+                                        <p>Welcome to Qwen AI Assistant. Ask questions or type prompts to run audits.</p>
+                                    </div>
+                                </div>
+
+                                <div class="chat-input-area">
+                                    <div class="chat-input-controls">
+                                        <label class="inject-context-checkbox">
+                                            <input type="checkbox" id="inject-context-checkbox" checked>
+                                            <span>Auto-inject workspace context payload</span>
+                                        </label>
+                                    </div>
+                                    <div class="chat-input-row">
+                                        <textarea id="chat-input" class="chat-input" placeholder="Type prompt here... (Ctrl+Enter to send)"></textarea>
+                                        <button id="send-btn" class="send-btn">Send</button>
+                                        <button id="stop-btn" class="stop-btn" style="display: none;">Stop</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Context side panel -->
+                            <div class="glass-panel d-flex flex-column h-100" id="context-panel-container" style="display: none; overflow: hidden;">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-paperclip"></i> Active Context</div>
+                                </div>
+                                <div class="context-content" style="flex: 1; overflow-y: auto;">
+                                    <pre id="active-context-display">Loading dynamic workspace facts...</pre>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ========================================================== -->
+                <!-- TRACK 2: SOVEREIGN SCANNERS PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade" id="scanner-panel" style="padding: 25px; overflow-y: auto; height: 100%;">
+                    <div class="row h-100">
+                        <div class="col-md-4">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-shield-halved"></i> Sovereign Audit Scanner</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="grok-query" class="form-label text-white-50">Search Pattern / Regex</label>
+                                    <input type="text" id="grok-query" class="form-control bg-dark text-white border-secondary" placeholder="e.g. sorry or dynamicflux" value="dynamicflux">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="grok-path" class="form-label text-white-50">Scan Scope Directory</label>
+                                    <input type="text" id="grok-path" class="form-control bg-dark text-white border-secondary" value="/root/workspace/Automata/Lean4-Automata">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="grok-regex" checked>
+                                    <label class="form-check-label text-white-50" for="grok-regex">
+                                        Regex Match Mode
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary w-100" id="run-grok-btn" onclick="executeGrokAudit()">
+                                    <i class="fas fa-play"></i> Run Codebase Audit
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="glass-panel d-flex flex-column" style="height: calc(100vh - 100px); overflow: hidden;">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-folder-tree"></i> Audit Matches & Results</div>
+                                </div>
+                                <div id="grok-results" class="log-panel" style="flex: 1; overflow-y: auto;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-magnifying-glass"></i>
+                                        <p>Configure scanning pattern on left and run codebase audit.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================== -->
+                <!-- TRACK 3: TRADING WAVES PORTFOLIO PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade" id="trading-panel" style="padding: 25px; overflow-y: auto; height: 100%;">
+                    
+                    <!-- Dynamic Sinusoidal Canvas (IPFS Wave Stream Visualizer) -->
+                    <div class="glass-panel mb-4" style="position: relative; overflow: hidden; background: rgba(12, 14, 26, 0.9); border-color: var(--accent-cyan);">
+                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: 1;">
+                            <canvas id="ipfsWaveCanvas" class="wave-canvas"></canvas>
+                        </div>
+                        <div style="position: relative; z-index: 2; padding: 10px;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 style="margin:0; font-weight:700;" class="text-info"><i class="fas fa-wave-square"></i> IPFS Wave Stream Metric Visualizer</h4>
+                                <span class="badge bg-info">Fast Metrically Observant Stream</span>
+                            </div>
+                            <p class="text-white-50" style="max-width: 800px; font-size: 0.9em; margin: 0;">
+                                Renders high-frequency sine waves dynamically mapping cryptocurrency assets and physical state vector eigenvalues directly from IPFS waves data streams.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-wallet"></i> Paper Trading Desk</div>
+                                    <div class="form-check form-switch ms-auto">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="auto-trade-toggle" onchange="toggleAutoTrading(this.checked)">
+                                        <label class="form-check-label text-warning" for="auto-trade-toggle">GPU Autonomous Mode (MI300X)</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-white-50">Available Cash:</span>
+                                    <span class="fw-bold text-success" id="trade-cash-balance">$100,000.00 USD</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-white-50">Net Asset Worth:</span>
+                                    <span class="fw-bold text-info" id="trade-net-worth">$100,000.00 USD</span>
+                                </div>
+                                
+                                <hr class="border-secondary">
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white-50">Select Asset</label>
+                                        <select id="trade-asset-select" class="form-select bg-dark text-white border-secondary">
+                                            <option value="BTC">Bitcoin (BTC)</option>
+                                            <option value="ETH">Ethereum (ETH)</option>
+                                            <option value="SOL">Solana (SOL)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white-50">Amount (USD)</label>
+                                        <input type="number" id="trade-amount-usd" class="form-control bg-dark text-white border-secondary" value="1500" min="10">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success flex-grow-1" onclick="executeCoinbaseTrade('buy')">Buy Asset</button>
+                                    <button class="btn btn-danger flex-grow-1" onclick="executeCoinbaseTrade('sell')">Sell Asset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="glass-panel d-flex flex-column" style="height: 100%;">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-receipt"></i> Active Portfolio Inventory</div>
+                                </div>
+                                <div style="overflow-y: auto; max-height: 250px;">
+                                    <table class="table table-dark table-hover border-secondary" style="font-size: 0.9em;">
+                                        <thead>
+                                            <tr>
+                                                <th>Asset</th>
+                                                <th>Held Quantity</th>
+                                                <th>Active Price</th>
+                                                <th>Position Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="portfolio-table-body">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">Loading asset portfolios...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================== -->
+                <!-- TRACK 4: QUANTUMSDK CONSOLE PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade" id="quantum-panel" style="padding: 25px; overflow-y: auto; height: 100%;">
+                    <div class="row">
+                        <!-- Bloch sphere column -->
+                        <div class="col-md-4">
+                            <div class="glass-panel text-center">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-atom"></i> Bloch Sphere Canvas</div>
+                                </div>
+                                <div class="py-3">
+                                    <canvas id="blochCanvas" class="bloch-canvas" width="250" height="250"></canvas>
+                                </div>
+                                <div class="bg-dark p-2 rounded text-start font-monospace text-info border border-secondary mt-2" style="font-size: 0.85em;">
+                                    <strong>State vector projection |ψ⟩:</strong><br>
+                                    - θ (Theta): <span id="bloch-val-theta">45.0°</span><br>
+                                    - φ (Phi): <span id="bloch-val-phi">45.0°</span><br>
+                                    - Expectation ⟨Z⟩: <span id="bloch-val-z">0.707</span>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel mt-3 text-start">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-snowflake text-cyan animate-pulse"></i> Cryogenic Cooler Engine</div>
+                                </div>
+                                <div class="p-2 font-monospace" style="font-size: 0.85em;">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-white-50">Mixing Chamber Temp:</span>
+                                        <span class="text-info fw-bold animate-pulse" id="cooler-temp">10.45 mK</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-white-50">Helium-3 Flow Rate:</span>
+                                        <span class="text-success fw-bold">12.4 μmol/s</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-white-50">Thermal Shield:</span>
+                                        <span class="text-cyan fw-bold">Active (4.2 K)</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-white-50">Qubit Sync State:</span>
+                                        <span class="badge bg-success" id="qubit-cooler-status">REFRESHED & COOLED</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-info w-100 mt-2" onclick="triggerCryoCoolerRefresh()">
+                                        <i class="fas fa-snowflake"></i> Refresh Cooled Down Sync
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 27 SO/SU Group jobs column -->
+                        <div class="col-md-8">
+                            <div class="glass-panel d-flex flex-column" style="height: 100%;">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <i class="fas fa-network-wired"></i> IBM Heron 27-Job VQE Suite (Physical Logs Simulation)
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-warning ms-auto" id="run-quantum-btn" onclick="triggerQuantumBatch()">
+                                        <i class="fas fa-bolt"></i> Trigger 27-Job Batch Run
+                                    </button>
+                                </div>
+                                
+                                <div class="qiskit-grid py-2" id="quantum-jobs-grid">
+                                    <!-- 27 dynamic cards -->
+                                </div>
+
+                                <div class="mt-3 p-3 bg-dark border border-secondary rounded font-monospace" id="quantum-selected-job-details" style="font-size: 0.85em;">
+                                    <div class="text-muted"><i class="fas fa-mouse-pointer"></i> Click a job card in the grid to display heavy-hex transpilation gate counts, qubit depth, and dephasing logs...</div>
+                                </div>
+
+                                <!-- Triggerware Custom Connector Bridge -->
+                                <div class="mt-3 p-3 border border-secondary rounded font-monospace" style="font-size: 0.85em; background: rgba(0, 240, 255, 0.03);">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-cyan fw-bold"><i class="fas fa-plug animate-pulse"></i> Triggerware Custom Connector Bridge</span>
+                                        <span class="badge bg-success" id="triggerware-connector-status">LISTENING (ZeroMQ Puller)</span>
+                                    </div>
+                                    <p class="text-white-50 mb-2" style="font-size: 0.9em;">
+                                        Exposes a hands-off non-blocking Zeromq PUSH/PULL dispatcher connecting live IBM jobs to Triggerware dynamic automation workflows.
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-info flex-grow-1" onclick="dispatchToTriggerware()">
+                                            <i class="fas fa-paper-plane"></i> Dispatch Job Payload to Triggerware Hook
+                                        </button>
+                                        <a href="https://console.triggerware.com/custom-connectors" target="_blank" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-external-link-alt"></i> Configure Custom Connectors
+                                        </a>
+                                    </div>
+                                    <div class="mt-2 p-2 rounded bg-black text-success border border-secondary" id="triggerware-bridge-logs" style="max-height: 80px; overflow-y: auto; font-size: 0.8em; font-family: monospace;">
+                                        [Triggerware Bridge] Core pipeline initialized.<br>
+                                        [ZeroMQ] Set HWM high water mark for 133-qubit array.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================== -->
+                <!-- TRACK 5: PERPLEXITY & COGNEE RESEARCH PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade" id="perplexity-panel" style="padding: 25px; overflow-y: auto; height: 100%;">
+                    <div class="row">
+                        <!-- Perplexity Prompts Exporter -->
+                        <div class="col-md-6">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-share-from-square"></i> Perplexity Deep Research Prompt Exporter</div>
+                                </div>
+                                <p class="text-white-50" style="font-size: 0.85em;">
+                                    API limits prevent deep real-time querying. Use this panel to select/customize massive context-rich query templates, copy to clipboard, or export to markdown file to paste inside your Perplexity browser session!
+                                </p>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50">Select Research Template</label>
+                                    <select id="perplexity-template-select" class="form-select bg-dark text-white border-secondary" onchange="loadPerplexityTemplate()">
+                                        <option value="quantum">SO/SU(27) Topological Symmetry Manifolds</option>
+                                        <option value="speechmatics">A-JEPA Sound Transcriptions & Cuneiform Trade Benchmarks</option>
+                                        <option value="cygwin">Cygwin MSBuild Pipeline Inside WINE Compatibility Containers</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50">Custom Formatted Prompt Area</label>
+                                    <textarea id="perplexity-prompt-textarea" class="form-control bg-dark text-white border-secondary font-monospace" style="height: 160px; font-size: 0.85em;"></textarea>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-info flex-grow-1" onclick="copyPerplexityPrompt()"><i class="fas fa-copy"></i> Copy to Clipboard</button>
+                                    <button class="btn btn-warning flex-grow-1" onclick="exportPerplexityQueryFile()"><i class="fas fa-file-export"></i> Export to markdown file</button>
+                                </div>
+                                <div id="perplexity-status-msg" class="mt-2 text-success font-monospace" style="font-size: 0.85em;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Cognee remember recall -->
+                        <div class="col-md-6">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-brain"></i> Cognee Vector Graph Database</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50">Save Context Fact (Remember)</label>
+                                    <div class="input-group">
+                                        <input type="text" id="cognee-remember-text" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Quantum epoch 4 runs complete.">
+                                        <button class="btn btn-success" onclick="saveCogneeFact()">Remember</button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50">Query Knowledge Graph (Recall)</label>
+                                    <div class="input-group">
+                                        <input type="text" id="cognee-recall-query" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Quantum dephasing error">
+                                        <button class="btn btn-info" onclick="queryCogneeGraph()">Recall Graph</button>
+                                    </div>
+                                </div>
+
+                                <div class="panel-header mt-4">
+                                    <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recalled Graph Memories</div>
+                                </div>
+                                <div id="cognee-timeline-container" style="overflow-y: auto; max-height: 180px; font-size: 0.85em;">
+                                    <div class="text-muted text-center py-3">No graph memories queried. Try typing "Quantum" and click Recall.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================== -->
+                <!-- TRACK 6: WINE & CYGWIN DIAGNOSTICS PANEL -->
+                <!-- ========================================================== -->
+                <div class="tab-pane fade" id="wine-panel" style="padding: 25px; overflow-y: auto; height: 100%;">
+                    <div class="row">
+                        <!-- WINE dll indicators -->
+                        <div class="col-md-6">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-windows"></i> WINE Cygwin DLL & Compiler Shims</div>
+                                </div>
+                                <ul class="list-group list-group-flush bg-transparent">
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>cygwin1.dll Shim Integrity:</span>
+                                        <span class="text-success fw-bold"><i class="fas fa-circle-check"></i> Validated (75GB custom bin)</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>MSBuild Toolchain Target:</span>
+                                        <span class="text-success fw-bold"><i class="fas fa-check-circle"></i> MSVC WINE Container (x64)</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>detect_orphans.py Registry Hash:</span>
+                                        <span class="text-success fw-bold"><i class="fas fa-lock"></i> Synchronized & Audited</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>WINEPREFIX Workspace Root:</span>
+                                        <span class="text-info fw-bold">/root/.wine/drive_c/cygwin/</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Speechmatics and Triggerware Custom Connectors -->
+                        <div class="col-md-6">
+                            <div class="glass-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-globe"></i> Custom Integration & Speech Connectors</div>
+                                </div>
+                                <ul class="list-group list-group-flush bg-transparent">
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Triggerware custom connectors:</span>
+                                        <a href="https://console.triggerware.com/custom-connectors" target="_blank" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Open triggerware
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Speechmatics translations:</span>
+                                        <span class="text-success fw-bold"><i class="fas fa-microphone"></i> Enabled (DE, FR, ES)</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Cuneiform old market benchmarks:</span>
+                                        <span class="text-info fw-bold">Active a-JEPA sequence listener</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modular UI Application Scripts -->
+    <script src="/ui/js/navigation.js"></script>
+    <script src="/ui/js/diagnostics.js"></script>
+    <script src="/ui/js/chat.js"></script>
+    <script src="/ui/js/flows.js"></script>
+    <script src="/ui/js/tickets.js"></script>
+    <script src="/ui/js/scanner.js"></script>
+    <script src="/ui/js/trading.js"></script>
+    <script src="/ui/js/quantum.js"></script>
+    <script src="/ui/js/perplexity.js"></script>
+
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

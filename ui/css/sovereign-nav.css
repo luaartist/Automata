@@ -1,0 +1,137 @@
+/* ========================================================== */
+/* SOVEREIGN PORTAL UNIFIED NAVIGATION HEADER STYLES          */
+/* ========================================================== */
+
+.sovereign-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 8, 24, 0.85);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    font-family: 'Outfit', 'Inter', sans-serif;
+    z-index: 9999;
+    position: relative;
+    margin: 20px auto 10px auto;
+    max-width: 1200px;
+    width: calc(100% - 32px);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    font-size: 1.5rem;
+    color: #8b5cf6;
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.brand-text {
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    color: #f3f1fe;
+}
+
+.brand-subtext {
+    color: #00ffff;
+    font-weight: 400;
+    margin-left: 2px;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #9c97bc;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.nav-link-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link-btn.active {
+    color: #ffffff;
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+}
+
+#nav-btn-forum.active, #nav-btn-forum:hover { border-color: rgba(139, 92, 246, 0.4); }
+#nav-btn-coherence.active, #nav-btn-coherence:hover { border-color: rgba(0, 255, 255, 0.4); }
+#nav-btn-trader.active, #nav-btn-trader:hover { border-color: rgba(16, 185, 129, 0.4); }
+#nav-btn-consciousness.active, #nav-btn-consciousness:hover { border-color: rgba(245, 158, 11, 0.4); }
+#nav-btn-voice.active, #nav-btn-voice:hover { border-color: rgba(236, 72, 153, 0.4); }
+
+.nav-telemetry {
+    display: flex;
+    align-items: center;
+}
+
+.telemetry-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 255, 255, 0.06);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #00ffff;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.status-indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-indicator-dot.online {
+    background-color: #00ffff;
+    box-shadow: 0 0 8px #00ffff;
+    animation: blink-status 2s infinite;
+}
+
+@keyframes blink-status {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+@media (max-width: 992px) {
+    .sovereign-nav-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+    }
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

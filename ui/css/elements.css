@@ -1,0 +1,56 @@
+/* Standard Element-Level Resets and Rules */
+html {
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--ds-bg-dark);
+    color: var(--ds-text-light);
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-size-step-0);
+    height: 100vh;
+    overflow: hidden;
+}
+
+a {
+    color: var(--ds-accent-cyan);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--ds-accent-blue);
+}
+
+button {
+    font-family: var(--ds-font-sans);
+}
+
+pre, code {
+    font-family: var(--ds-font-mono);
+}
+
+/* Form Inputs Reset */
+input, select, textarea {
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-size-step--1);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #fff;
+    padding: 8px 12px;
+    transition: all 0.25s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--ds-accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.2);
+}

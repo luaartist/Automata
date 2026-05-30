@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en" class="custom-scrollbar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign A-JEPA Dashboard</title>
+    
+    <!-- Premium Google Fonts: Outfit (headings) and Inter (body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        accentCyan: '#06b6d4',
+                        accentPink: '#ec4899',
+                        accentEmerald: '#10b981',
+                        accentViolet: '#8b5cf6',
+                        accentRose: '#f43f5e',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Smooth Scrollbar Customization */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(12, 14, 26, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.25);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Ambient Neural Mesh Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.04) 0%, transparent 45%),
+                radial-gradient(rgba(99, 102, 241, 0.06) 1.2px, transparent 1.2px);
+            background-size: 100% 100%, 100% 100%, 24px 24px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Glassmorphism Panel styles */
+        .glass-panel {
+            background: rgba(10, 10, 22, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.55);
+        }
+
+        /* Premium glowing status pills */
+        .status-glow-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(16, 185, 129, 0.06);
+        }
+        .status-glow-rose {
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            background: rgba(244, 63, 94, 0.08);
+        }
+        .status-glow-amber {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        /* Retro Neon Terminal Console */
+        .retro-terminal {
+            background-color: rgba(3, 3, 7, 0.9);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 4px 20px rgba(0, 0, 0, 0.5);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* JIT DNA Neural Grid Custom capsules */
+        .dna-pill {
+            height: 10px;
+            border-radius: 9999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
+        }
+        .dna-pill:hover {
+            transform: scale(1.25);
+            filter: brightness(1.25);
+            z-index: 10;
+        }
+        @keyframes pulse-dna {
+            0%, 100% { opacity: 0.95; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.04); filter: brightness(1.1); }
+        }
+        .dna-pulse {
+            animation: pulse-dna 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-[#030307] min-h-screen text-slate-200 font-sans pb-12 custom-scrollbar overflow-x-hidden">
+
+    <!-- ========================================================== -->
+    <!-- SOVEREIGN PORTAL UNIFIED NAVIGATION HEADER -->
+    <!-- ========================================================== -->
+    <div class="sovereign-nav-header" style="margin: 20px auto 10px auto; max-width: 1200px; width: calc(100% - 32px);">
+        <div class="nav-brand">
+            <i class="fas fa-cubes-stacked brand-icon"></i>
+            <span class="brand-text">SOVEREIGN<span class="brand-subtext">AUTOMATA</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="/ui/lean4a_forum.html" class="nav-link-btn" id="nav-btn-forum">
+                <i class="fas fa-route"></i> Unified Console
+            </a>
+            <a href="/ui/coherence_runner.html" class="nav-link-btn" id="nav-btn-coherence">
+                <i class="fas fa-network-wired"></i> Coherence Runner
+            </a>
+            <a href="/ui/paper_trader_simulation.html" class="nav-link-btn" id="nav-btn-trader">
+                <i class="fas fa-brain"></i> Sensory AI Aligner
+            </a>
+            <a href="/ui/consciousness_runner.html" class="nav-link-btn" id="nav-btn-consciousness">
+                <i class="fas fa-wave-square"></i> Automation Hub
+            </a>
+            <a href="/ui/tph_chattts_voice_hub.html" class="nav-link-btn" id="nav-btn-voice">
+                <i class="fas fa-microphone-lines"></i> ChatTTS Voice Hub
+            </a>
+        </div>
+        <div class="nav-telemetry">
+            <div class="telemetry-badge">
+                <span class="status-indicator-dot online"></span>
+                <span>MI300X ACTIVE</span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .sovereign-nav-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(10, 8, 24, 0.85);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 12px 24px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        font-family: 'Outfit', 'Inter', sans-serif;
+        z-index: 9999;
+        position: relative;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .brand-icon {
+        font-size: 1.5rem;
+        color: #8b5cf6;
+        text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    }
+
+    .brand-text {
+        font-weight: 800;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        color: #f3f1fe;
+    }
+
+    .brand-subtext {
+        color: #00ffff;
+        font-weight: 400;
+        margin-left: 2px;
+        text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-link-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #9c97bc;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+    }
+
+    .nav-link-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link-btn.active {
+        color: #ffffff;
+        background: rgba(139, 92, 246, 0.2);
+        border-color: rgba(139, 92, 246, 0.4);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+    }
+
+    #nav-btn-forum.active, #nav-btn-forum:hover { border-color: rgba(139, 92, 246, 0.4); }
+    #nav-btn-coherence.active, #nav-btn-coherence:hover { border-color: rgba(0, 255, 255, 0.4); }
+    #nav-btn-trader.active, #nav-btn-trader:hover { border-color: rgba(16, 185, 129, 0.4); }
+    #nav-btn-consciousness.active, #nav-btn-consciousness:hover { border-color: rgba(245, 158, 11, 0.4); }
+    #nav-btn-voice.active, #nav-btn-voice:hover { border-color: rgba(236, 72, 153, 0.4); }
+
+    .nav-telemetry {
+        display: flex;
+        align-items: center;
+    }
+
+    .telemetry-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 255, 255, 0.06);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #00ffff;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    .status-indicator-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .status-indicator-dot.online {
+        background-color: #00ffff;
+        box-shadow: 0 0 8px #00ffff;
+        animation: blink-status 2s infinite;
+    }
+
+    @keyframes blink-status {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    @media (max-width: 992px) {
+        .sovereign-nav-header {
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+        }
+        .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+    </style>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const path = window.location.pathname;
+        document.querySelectorAll(".nav-link-btn").forEach(btn => btn.classList.remove("active"));
+        
+        if (path.includes("lean4a_forum")) {
+            document.getElementById("nav-btn-forum").classList.add("active");
+        } else if (path.includes("coherence_runner")) {
+            document.getElementById("nav-btn-coherence").classList.add("active");
+        } else if (path.includes("paper_trader_simulation")) {
+            document.getElementById("nav-btn-trader").classList.add("active");
+        } else if (path.includes("consciousness_runner")) {
+            document.getElementById("nav-btn-consciousness").classList.add("active");
+        } else if (path.includes("tph_chattts_voice_hub")) {
+            document.getElementById("nav-btn-voice").classList.add("active");
+        }
+    });
+    </script>
+
+    <!-- Page Headers -->
+    <header class="text-center mb-8 mt-10 px-4">
+        <h1 class="text-5xl font-black font-outfit mb-3 tracking-tight bg-gradient-to-r from-cyan-300 via-indigo-300 to-pink-300 bg-clip-text text-transparent drop-shadow-md">
+            Sovereign Paper Desk & Analytics
+        </h1>
+        <p class="text-sm font-light tracking-wide text-slate-400 max-w-xl mx-auto">
+            Dynamic 3D audio-reflection manifolds, emotional debate resonance alignment, and real-time HFT exchange simulator.
+        </p>
+    </header>
+
+    <!-- Page Tabs -->
+    <div class="max-w-6xl mx-auto px-4 mb-10">
+        <div class="flex bg-[#070712]/80 backdrop-blur border border-white/5 p-1.5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] space-x-2 font-outfit">
+            <button onclick="switchTab('paper-desk')" id="tab-paper-desk" class="flex-1 text-center py-3.5 rounded-xl text-xs font-bold transition-all bg-gradient-to-r from-indigo-700 to-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.01] active:scale-95">
+                💼 SOVEREIGN PAPER DESK
+            </button>
+            <button onclick="switchTab('coinbase-tracker')" id="tab-coinbase-tracker" class="flex-1 text-center py-3.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200 hover:bg-white/5 hover:scale-[1.01] active:scale-95">
+                📈 COINBASE L2 FEED (5D HFT)
+            </button>
+            <button onclick="switchTab('speechmatics')" id="tab-speechmatics" class="flex-1 text-center py-3.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200 hover:bg-white/5 hover:scale-[1.01] active:scale-95">
+                🎙️ A-JEPA AUDIO MANIFOLD
+            </button>
+            <button onclick="switchTab('system-console')" id="tab-system-console" class="flex-1 text-center py-3.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200 hover:bg-white/5 hover:scale-[1.01] active:scale-95">
+                💻 LIVE SYSTEM CONSOLE
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="max-w-6xl mx-auto px-4">
+
+        <!-- TAB 1: SOVEREIGN PAPER DESK -->
+        <div id="pane-paper-desk" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Side: Inputs & Config -->
+            <div class="space-y-6">
+                <!-- Assumptions Card -->
+                <div class="bg-slate-900/80 backdrop-blur border border-indigo-500/10 rounded-2xl shadow-xl p-6">
+                    <h2 class="text-md font-bold text-slate-200 mb-4">Trading Inputs</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-2">
+                            <label class="text-sm text-slate-400 flex-grow">Target Market</label>
+                            <select id="select-market" class="bg-slate-950 text-slate-200 border-none font-medium focus:outline-none cursor-pointer text-right w-44">
+                                <option value="BTC" selected>₿ BTC (Bitcoin)</option>
+                                <option value="ETH">Ξ ETH (Ethereum)</option>
+                                <option value="SOL">◎ SOL (Solana)</option>
+                                <option value="ADA">₳ ADA (Cardano)</option>
+                                <option value="DOGE">🐕 DOGE (Dogecoin)</option>
+                                <option value="XRP">✕ XRP (Ripple)</option>
+                                <option value="DOT">● DOT (Polkadot)</option>
+                                <option value="LINK">🔗 LINK (Chainlink)</option>
+                                <option value="AVAX">🔺 AVAX (Avalanche)</option>
+                                <option value="MATIC">🟣 MATIC (Polygon)</option>
+                                <option value="BNB">🔶 BNB (Binance Coin)</option>
+                                <option value="LTC">Ł LTC (Litecoin)</option>
+                                <option value="SHIB">🐕 SHIB (Shiba Inu)</option>
+                                <option value="ATOM">⚛️ ATOM (Cosmos)</option>
+                                <option value="UNI">🦄 UNI (Uniswap)</option>
+                                <option value="SPY">📊 SPY (S&P 500 ETF)</option>
+                                <option value="QQQ">📈 QQQ (Nasdaq 100 ETF)</option>
+                                <option value="AAPL">🍏 AAPL (Apple)</option>
+                                <option value="MSFT">💻 MSFT (Microsoft)</option>
+                                <option value="GOOGL">🔍 GOOGL (Alphabet)</option>
+                                <option value="NVDA">💚 NVDA (NVIDIA)</option>
+                                <option value="TSLA">⚡ TSLA (Tesla)</option>
+                                <option value="AMZN">📦 AMZN (Amazon)</option>
+                                <option value="META">♾️ META (Meta)</option>
+                                <option value="AMD">🔴 AMD (Advanced Micro Devices)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1 mt-1">
+                            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">⚡ Quick-Switch Major Markets</span>
+                            <div class="flex flex-wrap gap-1">
+                                <button type="button" onclick="quickSelectMarket('BTC')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">₿ BTC</button>
+                                <button type="button" onclick="quickSelectMarket('ETH')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">Ξ ETH</button>
+                                <button type="button" onclick="quickSelectMarket('SOL')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">◎ SOL</button>
+                                <button type="button" onclick="quickSelectMarket('SPY')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">📊 SPY</button>
+                                <button type="button" onclick="quickSelectMarket('QQQ')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">📈 QQQ</button>
+                                <button type="button" onclick="quickSelectMarket('NVDA')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">💚 NVDA</button>
+                                <button type="button" onclick="quickSelectMarket('DOGE')" class="px-2 py-0.5 rounded bg-slate-950 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-300 text-[9px] font-bold transition-all">🐕 DOGE</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-2">
+                            <label class="text-sm text-slate-400 flex-grow">Initial Capital ($)</label>
+                            <input type="number" id="input-capital" value="100000" class="w-24 text-right font-medium bg-transparent text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-2">
+                            <label class="text-sm text-slate-400 flex-grow">Win Rate (%)</label>
+                            <input type="number" id="input-winrate" value="65" class="w-16 text-right font-medium bg-transparent text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-2">
+                            <label class="text-sm text-slate-400 flex-grow">Dynamic Flux (G')</label>
+                            <input type="number" id="input-flux" value="5.0" class="w-16 text-right font-medium bg-transparent text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="flex flex-col border border-indigo-500/15 rounded bg-slate-950 px-3 py-2 space-y-1">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs text-slate-400">Simulation Interval</label>
+                                <span id="speed-val" class="text-xs font-bold text-indigo-400 font-mono">1.0s</span>
+                            </div>
+                            <input type="range" id="input-speed" min="0.1" max="5.0" step="0.1" value="1.0" class="w-full accent-indigo-500 cursor-pointer bg-slate-800 rounded-lg appearance-none h-1">
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <button id="btn-calculate" class="col-span-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-indigo-600/10 transition-all text-center">
+                            🚀 RUN
+                        </button>
+                        <button id="btn-reset" class="bg-slate-800 text-slate-300 font-bold text-xs py-3 rounded-lg hover:bg-slate-700 transition-all text-center">
+                            🔄 RESET
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        <button id="btn-pause-resume" class="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-amber-600/10 transition-all flex items-center justify-center space-x-2">
+                            <span>⏸️ PAUSE SIMULATION</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Swarm Telemetry Status Card -->
+                <div class="bg-slate-900/80 backdrop-blur border border-indigo-500/10 rounded-2xl shadow-xl p-6">
+                    <h2 class="text-sm font-bold text-slate-200 mb-4">Dynamic Swarm Telemetry</h2>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">Risk Stop Level</span>
+                            <span id="safety-stop-status" class="px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-950/60 text-emerald-400 border border-emerald-500/20">
+                                SAFE (HALT=0)
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">Total Swarm Trades</span>
+                            <span id="stat-total-trades" class="font-bold text-slate-200">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">Flux Execution Gap</span>
+                            <span class="text-indigo-400 font-bold">133-Worker BitNet Swarm</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800">
+                            <span class="text-slate-400 block mb-1 text-[9px]">DYNAMIC FLUX EXCURSION RATE</span>
+                            <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-indigo-500/5">
+                                <div id="flux-bar" class="bg-indigo-500 h-2 transition-all duration-300" style="width: 10%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Live P&L and Real-time Stream -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Large P&L Banner -->
+                <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-indigo-500/20 rounded-2xl shadow-2xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+                    <div class="absolute -right-6 -bottom-6 text-indigo-500/5 text-9xl font-black pointer-events-none select-none">
+                        TPH
+                    </div>
+                    <div>
+                        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Simulated Equity Value</h2>
+                        <div id="simulated-pnl" class="text-5xl font-black text-white tracking-tight font-mono">$100,000.00</div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 border-t border-indigo-500/10 pt-4 mt-6 text-[10px] text-slate-400">
+                        <div>
+                            <span class="block text-slate-500 font-bold uppercase">USD BALANCE</span>
+                            <span id="gain-algo" class="font-bold text-slate-200 text-xs font-mono">$100,000.00</span>
+                        </div>
+                        <div>
+                            <span id="label-asset-balance" class="block text-slate-500 font-bold uppercase">BTC BALANCE</span>
+                            <span id="gain-arb" class="font-bold text-slate-200 text-xs font-mono">₿0.0000</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-500 font-bold uppercase">TOTAL PORTFOLIO</span>
+                            <span id="gain-total" class="font-bold text-indigo-400 text-xs font-mono">$100,000.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ledger log console -->
+                <div class="glass-panel rounded-3xl p-6">
+                    <h3 class="text-xs font-black font-outfit text-slate-300 uppercase tracking-widest mb-3">Live Paper Trader Stream (SOC 2 Ledger)</h3>
+                    <div id="live-ledger-stream" class="h-48 overflow-y-auto bg-black/60 rounded-2xl p-4 font-mono text-[11px] text-slate-300 space-y-1.5 border border-white/5 custom-scrollbar">
+                        <div class="text-slate-500 italic">Waiting for simulation pipeline start...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: COINBASE L2 TRACKER -->
+        <div id="pane-coinbase-tracker" class="space-y-6 hidden">
+            <!-- Coinbase Feed Controls -->
+            <div class="bg-slate-900/80 backdrop-blur border border-indigo-500/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 font-outfit">
+                <div class="flex items-center space-x-3">
+                    <div class="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-200">Coinbase L2 Feed Controller</h3>
+                        <p class="text-[10px] text-slate-400">Configure high-frequency order book tracking stream parameters</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Market Select -->
+                    <div class="flex flex-col items-start border border-indigo-500/15 rounded bg-slate-950 px-3 py-1.5 space-y-1.5">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-xs text-slate-400">Target Feed Market</label>
+                            <select id="cb-select-market" class="bg-slate-950 text-slate-200 border-none font-bold text-xs focus:outline-none cursor-pointer">
+                                <option value="BTC" selected>₿ BTC (Bitcoin)</option>
+                                <option value="ETH">Ξ ETH (Ethereum)</option>
+                                <option value="SOL">◎ SOL (Solana)</option>
+                                <option value="ADA">₳ ADA (Cardano)</option>
+                                <option value="DOGE">🐕 DOGE (Dogecoin)</option>
+                                <option value="XRP">✕ XRP (Ripple)</option>
+                                <option value="DOT">● DOT (Polkadot)</option>
+                                <option value="LINK">🔗 LINK (Chainlink)</option>
+                                <option value="AVAX">🔺 AVAX (Avalanche)</option>
+                                <option value="MATIC">🟣 MATIC (Polygon)</option>
+                                <option value="BNB">🔶 BNB (Binance Coin)</option>
+                                <option value="LTC">Ł LTC (Litecoin)</option>
+                                <option value="SHIB">🐕 SHIB (Shiba Inu)</option>
+                                <option value="ATOM">⚛️ ATOM (Cosmos)</option>
+                                <option value="UNI">🦄 UNI (Uniswap)</option>
+                                <option value="SPY">📊 SPY (S&P 500 ETF)</option>
+                                <option value="QQQ">📈 QQQ (Nasdaq 100 ETF)</option>
+                                <option value="AAPL">🍏 AAPL (Apple)</option>
+                                <option value="MSFT">💻 MSFT (Microsoft)</option>
+                                <option value="GOOGL">🔍 GOOGL (Alphabet)</option>
+                                <option value="NVDA">💚 NVDA (NVIDIA)</option>
+                                <option value="TSLA">⚡ TSLA (Tesla)</option>
+                                <option value="AMZN">📦 AMZN (Amazon)</option>
+                                <option value="META">♾️ META (Meta)</option>
+                                <option value="AMD">🔴 AMD (Advanced Micro Devices)</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-wrap gap-1 max-w-[280px]">
+                            <button type="button" onclick="quickSelectCbMarket('BTC')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">₿ BTC</button>
+                            <button type="button" onclick="quickSelectCbMarket('ETH')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">Ξ ETH</button>
+                            <button type="button" onclick="quickSelectCbMarket('SOL')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">◎ SOL</button>
+                            <button type="button" onclick="quickSelectCbMarket('SPY')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">📊 SPY</button>
+                            <button type="button" onclick="quickSelectCbMarket('QQQ')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">📈 QQQ</button>
+                            <button type="button" onclick="quickSelectCbMarket('NVDA')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">💚 NVDA</button>
+                            <button type="button" onclick="quickSelectCbMarket('DOGE')" class="px-1.5 py-0.5 rounded bg-slate-900 border border-indigo-500/10 hover:bg-indigo-600 hover:text-white text-slate-400 text-[8px] font-bold transition-all">🐕 DOGE</button>
+                        </div>
+                    </div>
+                    <!-- Source Mode (Live API vs Simulated) -->
+                    <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-1.5 space-x-2">
+                        <label class="text-xs text-slate-400">Data Source</label>
+                        <select id="cb-select-source" class="bg-slate-950 text-slate-200 border-none font-bold text-xs focus:outline-none cursor-pointer">
+                            <option value="live">⚡ LIVE WEBSOCKET</option>
+                            <option value="sim" selected>🔄 OFFLINE SIMULATION</option>
+                        </select>
+                    </div>
+                    <!-- Stream Speed Control -->
+                    <div class="flex items-center border border-indigo-500/15 rounded bg-slate-950 px-3 py-1.5 space-x-2">
+                        <label class="text-xs text-slate-400">Feed Interval</label>
+                        <input type="range" id="cb-input-speed" min="0.1" max="5.0" step="0.1" value="1.0" class="w-20 accent-indigo-500 cursor-pointer bg-slate-800 rounded-lg appearance-none h-1">
+                        <span id="cb-speed-val" class="text-[10px] font-bold text-indigo-400 font-mono w-8 text-right">1.0s</span>
+                    </div>
+                    <!-- Update Stream Button -->
+                    <div class="flex items-center space-x-2">
+                        <button id="btn-cb-update" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-indigo-600/10 transition-all">
+                            UPDATE FEED
+                        </button>
+                        <button id="btn-cb-pause-resume" class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-amber-600/10 transition-all">
+                            ⏸️ PAUSE FEED
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5D Metrics Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 font-outfit">
+                <div class="glass-panel rounded-3xl p-5 border-t-4 border-t-cyan-500">
+                    <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block">Shannon Entropy</span>
+                    <div id="metric-shannon" class="text-3xl font-black text-cyan-400 mt-1 font-mono">0.000</div>
+                    <span class="text-[9px] text-slate-500">Liquidity Fragmentation</span>
+                </div>
+                <div class="glass-panel rounded-3xl p-5 border-t-4 border-t-purple-500">
+                    <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block">Spectral Entropy</span>
+                    <div id="metric-spectral" class="text-3xl font-black text-purple-400 mt-1 font-mono">0.000</div>
+                    <span class="text-[9px] text-slate-500">Amplitude oscillation standard</span>
+                </div>
+                <div class="glass-panel rounded-3xl p-5 border-t-4 border-t-emerald-500">
+                    <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block">Order Imbalance</span>
+                    <div id="metric-imbalance" class="text-3xl font-black text-emerald-400 mt-1 font-mono">+0.000</div>
+                    <span class="text-[9px] text-slate-500">Directional Pressure proxy</span>
+                </div>
+                <div class="glass-panel rounded-3xl p-5 border-t-4 border-t-rose-500">
+                    <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block">OFI Delta Flow</span>
+                    <div id="metric-ofi" class="text-3xl font-black text-rose-400 mt-1 font-mono">0.0</div>
+                    <span class="text-[9px] text-slate-500">Depth Volume Flow</span>
+                </div>
+            </div>
+
+            <!-- BBO + Live Stream -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- BBO State Details -->
+                <div class="glass-panel rounded-3xl p-6 space-y-4 font-outfit">
+                    <h3 class="text-xs font-black text-slate-300 uppercase tracking-widest">HFT Order Book Metrics</h3>
+                    <div class="space-y-3.5 text-xs text-slate-300">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">Best Bid</span>
+                            <span id="cb-best-bid" class="font-bold text-emerald-400 font-mono">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">Best Ask</span>
+                            <span id="cb-best-ask" class="font-bold text-rose-400 font-mono">$0.00</span>
+                        </div>
+                        <div class="flex justify-between border-t border-white/5 pt-2">
+                            <span class="text-slate-400 font-medium">Mid Price</span>
+                            <span id="cb-mid-price" class="font-bold text-slate-200 font-mono">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">Microprice</span>
+                            <span id="cb-microprice" class="font-bold text-slate-200 font-mono">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">Spread Ratio</span>
+                            <span id="cb-spread" class="font-bold text-indigo-400 font-mono">0.00 bps</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">Alpha Depth Std</span>
+                            <span id="cb-std" class="font-bold text-purple-400 font-mono">0.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coinbase WSS console -->
+                <div class="lg:col-span-2 glass-panel rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-xs font-black font-outfit text-slate-300 uppercase tracking-widest">Live Coinbase L2 WebSocket Events</h3>
+                            <span id="cb-fps" class="text-[9px] px-2 py-0.5 bg-[#05050c] border border-white/5 text-indigo-400 font-bold rounded">
+                                ~200 TPS INFERRED (KEYLESS)
+                            </span>
+                        </div>
+                        <div id="coinbase-live-stream" class="h-48 overflow-y-auto bg-black/60 rounded-2xl p-4 font-mono text-[10px] text-slate-300 space-y-1 border border-white/5 custom-scrollbar">
+                            <div class="text-slate-500 italic">Waiting for Coinbase bridge feed...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: A-JEPA AUDIO CORE -->
+        <div id="pane-speechmatics" class="grid grid-cols-1 lg:grid-cols-3 gap-6 hidden">
+            <!-- Settings panel -->
+            <div class="glass-panel rounded-3xl p-6 space-y-5 flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="border-b border-white/5 pb-3">
+                        <h3 class="text-xs font-black font-outfit text-slate-200 uppercase tracking-widest flex items-center gap-2">
+                            🎙️ Sensory Alignment Deck
+                        </h3>
+                        <p class="text-[10px] text-slate-400 mt-1 leading-normal">
+                            <strong>Dual Embodiments:</strong> Channel A & B run as separate autonomous vocal entities. They can clash or debate in real-time. A-JEPA models the "audio reflections" in-the-middle to map phase coherence.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-3.5 text-xs font-outfit">
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 block mb-1">INPUT MODE</label>
+                            <select id="audio-input-mode" class="w-full bg-[#05050a]/90 border border-white/5 rounded-xl px-3 py-2.5 outline-none text-slate-200 focus:border-indigo-500/50">
+                                <option value="local">Local Microphone (100% Free & Secure)</option>
+                                <option value="cloud">Speechmatics Cloud API (Secured Env Key)</option>
+                            </select>
+                        </div>
+                        <div id="speechmatics-token-field" class="hidden">
+                            <div class="bg-indigo-950/20 border border-indigo-500/20 rounded-xl p-2.5 text-[10px] text-indigo-300 leading-relaxed font-sans">
+                                🔒 <strong>Secured Server Mode Active:</strong> The host's <code>SPEECHMATICS_API_KEY</code> environment variable will be securely routed in the backend to ensure local/cloud sandbox boundary isolation.
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 block mb-1">COGNITIVE ADAPTER</label>
+                            <select class="w-full bg-[#05050a]/90 border border-white/5 rounded-xl px-3 py-2.5 outline-none text-slate-200 focus:border-indigo-500/50">
+                                <option>SymbolicJepaAligner (MI300X ROCm Accelerate)</option>
+                                <option>LoadedTribeEngine (Frozen Latents)</option>
+                            </select>
+                        </div>
+
+                        <!-- 3D Spatial Audio and Acoustic Reflection Controls -->
+                        <div class="bg-[#05050c]/80 border border-white/5 rounded-xl p-3 space-y-3">
+                            <span class="text-[9px] font-black text-indigo-300 uppercase tracking-widest block">3D Binaural Sound Stage</span>
+                            <div>
+                                <div class="flex justify-between text-[9px] text-slate-400 mb-1">
+                                    <span>BINAURAL PAN</span>
+                                    <span id="val-binaural-pan" class="text-indigo-400 font-bold font-mono">0.0 (Stereo Centered)</span>
+                                </div>
+                                <input type="range" min="-100" max="100" value="0" id="slider-binaural-pan" class="w-full accent-indigo-500 h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[9px] text-slate-400 mb-1">
+                                    <span>ACOUSTIC REFLECTION DEPTH</span>
+                                    <span id="val-reflection-depth" class="text-indigo-400 font-bold font-mono">75% (Spatialized)</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="75" id="slider-reflection-depth" class="w-full accent-indigo-500 h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        
+                        <button onclick="toggleAudioVisualization()" id="btn-audio-stream" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-extrabold py-3 rounded-xl transition-all text-xs mt-2 shadow-lg shadow-indigo-600/20 active:scale-95">
+                            LISTEN FOR WAVEFORMS (A-JEPA)
+                        </button>
+
+                        <!-- Qwen A-JEPA Mood Ring Voice Synthesizer -->
+                        <div class="bg-[#05050c]/90 border border-indigo-500/20 rounded-2xl p-4 space-y-3 mt-4">
+                            <span class="text-[10px] font-black text-pink-400 uppercase tracking-widest block flex items-center gap-1.5 font-outfit">
+                                <span class="w-2 h-2 rounded-full bg-pink-400 animate-pulse"></span>
+                                Qwen Mood-Ring Vocalizer (ChatTTS)
+                            </span>
+                            <p class="text-[10px] text-slate-400 leading-normal">
+                                Synthesize highly emotional, physical third-person reflections based on the A-JEPA synergy matrix state.
+                            </p>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-[10px] font-mono">
+                                <div>
+                                    <label class="text-slate-500 block mb-1">Oral Style (0-9)</label>
+                                    <input type="range" id="qwen-oral-style" min="0" max="9" value="7" class="w-full accent-pink-500 h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="text-slate-500 block mb-1">Laughter (0-9)</label>
+                                    <input type="range" id="qwen-laughter" min="0" max="9" value="3" class="w-full accent-pink-500 h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                            </div>
+                            
+                            <button onclick="synthesizeQwenMoodRing()" id="btn-qwen-voice" class="w-full bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 text-white font-extrabold py-2.5 rounded-xl transition-all text-[10px] shadow-lg shadow-pink-600/20 active:scale-95">
+                                SPEAK JEPA RESONANCE NARRATIVE
+                            </button>
+                            
+                            <!-- Hidden Audio Element -->
+                            <audio id="qwen-mood-audio" class="hidden" controls></audio>
+                            <div id="qwen-voice-status" class="text-[9px] font-mono text-slate-500 italic text-center">Ready to vocalize</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppression / Coherence Status Panel -->
+                <div class="border-t border-white/5 pt-4 mt-4 space-y-3 font-outfit">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-wider">A-JEPA Collision Suppressor</h4>
+                    
+                    <div id="collision-suppressor-banner" class="w-full text-center py-2.5 px-3 rounded-xl text-emerald-400 status-glow-emerald font-mono text-[10px] font-black tracking-wider transition-all duration-300">
+                        COLLISION SUPPRESSION: ACTIVE
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-400">
+                        <div class="bg-black/60 p-2.5 rounded-xl border border-white/5">
+                            <span class="block text-slate-500 text-[8px] uppercase">Phase Align</span>
+                            <span id="jepa-phase-val" class="font-bold text-slate-200 text-xs">1.0000</span>
+                        </div>
+                        <div class="bg-black/60 p-2.5 rounded-xl border border-white/5">
+                            <span class="block text-slate-500 text-[8px] uppercase">Overlap Risk</span>
+                            <span id="jepa-collision-val" class="font-bold text-slate-200 text-xs">0.0000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Conversation Transcript Stream -->
+                <div class="border-t border-white/5 pt-4 space-y-2">
+                    <h4 class="text-[10px] font-black font-outfit text-slate-400 uppercase tracking-wider">Live Speechmatics Transcript</h4>
+                    <div id="dialogue-transcript" class="h-28 overflow-y-auto bg-black/60 border border-white/5 rounded-xl p-3 font-mono text-[9px] text-slate-400 space-y-1.5 custom-scrollbar">
+                        <div class="text-slate-600 italic">[Waiting for voice input...]</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waveform & JIT DNA Track Columns -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Dual tracks side-by-side -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Track A: User Voice Manifold -->
+                    <div class="glass-panel border border-cyan-500/10 rounded-3xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-xs font-black font-outfit text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                                    Channel A: User Vocal Manifold
+                                </h3>
+                                <span id="jepa-user-badge" class="text-[8px] px-1.5 py-0.5 bg-[#05050c] text-slate-500 border border-cyan-500/10 font-bold rounded uppercase">
+                                    Mic Inactive
+                                </span>
+                            </div>
+                            <div class="relative bg-[#020204] border border-white/5 rounded-2xl h-32 overflow-hidden flex items-center justify-center">
+                                <canvas id="waveform-canvas" class="w-full h-full"></canvas>
+                                <div id="waveform-inactive-text" class="absolute text-[10px] text-slate-600 font-semibold select-none tracking-widest uppercase">Mic Inactive</div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-white/5 pt-3 mt-4">
+                            <span class="text-[9px] font-black font-outfit uppercase tracking-wider block mb-2 text-cyan-300">User JIT DNA (80-Dim Matrix)</span>
+                            <div id="jit-dna-grid" class="grid grid-cols-10 gap-1.5">
+                                <div class="col-span-10 text-center text-[10px] text-slate-600 italic py-4 select-none">No active projections</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track B: Agent Auditory Echo -->
+                    <div class="glass-panel border border-pink-500/10 rounded-3xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-xs font-black font-outfit text-pink-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-pink-400 animate-pulse"></span>
+                                    Channel B: Agent Auditory Echo
+                                </h3>
+                                <span id="jepa-agent-badge" class="text-[8px] px-1.5 py-0.5 bg-[#05050c] text-slate-500 border border-pink-500/10 font-bold rounded uppercase">
+                                    Echo Inactive
+                                </span>
+                            </div>
+                            <div class="relative bg-[#020204] border border-white/5 rounded-2xl h-32 overflow-hidden flex items-center justify-center">
+                                <canvas id="waveform-canvas-agent" class="w-full h-full"></canvas>
+                                <div id="waveform-inactive-text-agent" class="absolute text-[10px] text-slate-600 font-semibold select-none tracking-widest uppercase">Echo Inactive</div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-white/5 pt-3 mt-4">
+                            <span class="text-[9px] font-black font-outfit uppercase tracking-wider block mb-2 text-pink-300">Agent JIT DNA (80-Dim Matrix)</span>
+                            <div id="jit-dna-grid-agent" class="grid grid-cols-10 gap-1.5">
+                                <div class="col-span-10 text-center text-[10px] text-slate-600 italic py-4 select-none">No active projections</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Lower Aligned Details -->
+                <div class="glass-panel rounded-3xl p-5">
+                    <div class="grid grid-cols-3 gap-4 text-[10px] text-slate-400 font-mono">
+                        <div>
+                            <span>Processing Engine</span>
+                            <span class="block font-bold text-slate-200 text-xs">PyTorch ROCm Acceleration</span>
+                        </div>
+                        <div>
+                            <span>Aligner Latency</span>
+                            <span class="block font-bold text-slate-200 text-xs">~8.4ms</span>
+                        </div>
+                        <div>
+                            <span>Synthesized Synergy</span>
+                            <span id="jepa-synergy-val" class="block font-bold text-emerald-400 text-xs">0.0000</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 4: LIVE SYSTEM CONSOLE -->
+        <div id="pane-system-console" class="grid grid-cols-1 lg:grid-cols-3 gap-6 hidden">
+            <!-- Flows Control Panel -->
+            <div class="glass-panel rounded-3xl p-6 space-y-4">
+                <h3 class="text-xs font-black font-outfit text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                    💻 Vessel Flows Controller
+                </h3>
+                <p class="text-xs text-slate-400">Trigger compile-time Go registry flows and stream system diagnostics live on Sovereign TLS.</p>
+                
+                <div id="flow-buttons-container" class="space-y-2 text-xs">
+                    <div class="text-slate-500 italic">Querying flow registry...</div>
+                </div>
+            </div>
+
+            <!-- Terminal output -->
+            <div class="lg:col-span-2 retro-terminal rounded-3xl p-6 flex flex-col justify-between h-[450px]">
+                <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                        <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></span>
+                        <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+                        <span class="text-xs text-indigo-400 font-mono pl-3 font-bold tracking-wider">SOVEREIGN_SYSTEM_SHELL</span>
+                    </div>
+                    <button onclick="clearTerminalLogs()" class="text-[10px] text-slate-500 hover:text-indigo-400 font-bold uppercase tracking-wider transition-all">Clear Terminal</button>
+                </div>
+                
+                <div id="log-panel" class="flex-grow overflow-y-auto font-mono text-xs text-emerald-400 space-y-1.5 bg-black/40 p-4 rounded-2xl border border-white/5 custom-scrollbar">
+                    <div class="text-slate-500 font-bold select-none">[SYSTEM INITIALIZATION DONE]</div>
+                    <div class="text-slate-400 select-none">Welcome to the Sovereign Flows execution panel. Select a flow on the left side to compile and run diagnostics on ROCm hardware.</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Global Javascript Handlers -->
+    <script>
+        let audioRunning = false;
+        let animationFrameIdUser = null;
+        let animationFrameIdAgent = null;
+        let canvasUser = document.getElementById('waveform-canvas');
+        let ctxUser = canvasUser.getContext('2d');
+        let canvasAgent = document.getElementById('waveform-canvas-agent');
+        let ctxAgent = canvasAgent.getContext('2d');
+        let paperEventSource = null;
+        let coinbaseEventSource = null;
+
+        // Cached Canvas Gradient Objects (Performance Optimization)
+        let gradUser = null;
+        let gradAgent = null;
+
+        // Web Audio API State
+        let audioCtx = null;
+        let analyser = null;
+        let micStream = null;
+        let localAudioInterval = null;
+
+        // Resize Canvases dynamically
+        function resizeCanvas() {
+            if (canvasUser && canvasUser.parentElement) {
+                canvasUser.width = canvasUser.parentElement.clientWidth;
+                canvasUser.height = 120;
+                
+                // Initialize/Update User Gradients dynamically on resize
+                gradUser = ctxUser.createLinearGradient(0, 0, canvasUser.width, 0);
+                gradUser.addColorStop(0, '#06b6d4');
+                gradUser.addColorStop(0.5, '#34d399');
+                gradUser.addColorStop(1, '#06b6d4');
+            }
+            if (canvasAgent && canvasAgent.parentElement) {
+                canvasAgent.width = canvasAgent.parentElement.clientWidth;
+                canvasAgent.height = 120;
+                
+                // Initialize/Update Agent Gradients dynamically on resize
+                gradAgent = ctxAgent.createLinearGradient(0, 0, canvasAgent.width, 0);
+                gradAgent.addColorStop(0, '#ec4899');
+                gradAgent.addColorStop(0.5, '#a855f7');
+                gradAgent.addColorStop(1, '#ec4899');
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Switch Active Tabs
+        function switchTab(tabId) {
+            currentTab = tabId;
+            const paperTabBtn = document.getElementById('tab-paper-desk');
+            const cbTabBtn = document.getElementById('tab-coinbase-tracker');
+            const smTabBtn = document.getElementById('tab-speechmatics');
+            const scTabBtn = document.getElementById('tab-system-console');
+            
+            const paperPane = document.getElementById('pane-paper-desk');
+            const cbPane = document.getElementById('pane-coinbase-tracker');
+            const smPane = document.getElementById('pane-speechmatics');
+            const scPane = document.getElementById('pane-system-console');
+
+            // Reset tab styling
+            [paperTabBtn, cbTabBtn, smTabBtn, scTabBtn].forEach(btn => {
+                btn.className = "flex-1 text-center py-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-slate-200 hover:bg-white/5";
+            });
+
+            // Hide all panes
+            [paperPane, cbPane, smPane, scPane].forEach(pane => pane.classList.add('hidden'));
+
+            // Apply selected tab styles and show pane
+            if (tabId === 'paper-desk') {
+                paperTabBtn.className = "flex-1 text-center py-3 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                paperPane.classList.remove('hidden');
+            } else if (tabId === 'coinbase-tracker') {
+                cbTabBtn.className = "flex-1 text-center py-3 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                cbPane.classList.remove('hidden');
+            } else if (tabId === 'speechmatics') {
+                smTabBtn.className = "flex-1 text-center py-3 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                smPane.classList.remove('hidden');
+                resizeCanvas();
+            } else {
+                scTabBtn.className = "flex-1 text-center py-3 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+                scPane.classList.remove('hidden');
+            }
+        }
+
+        // Handle Audio Input Mode Toggle
+        document.getElementById('audio-input-mode').addEventListener('change', (e) => {
+            const tokenField = document.getElementById('speechmatics-token-field');
+            if (e.target.value === 'cloud') {
+                tokenField.classList.remove('hidden');
+            } else {
+                tokenField.classList.add('hidden');
+            }
+        });
+
+        // Toggle Audio Visualization
+        function toggleAudioVisualization() {
+            const btn = document.getElementById('btn-audio-stream');
+            audioRunning = !audioRunning;
+
+            if (audioRunning) {
+                btn.textContent = "STOP STREAMING AUDIO";
+                btn.className = "w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-lg transition-all text-xs mt-2 shadow-lg shadow-red-600/10";
+                
+                document.getElementById('jit-dna-grid').innerHTML = '';
+                document.getElementById('jit-dna-grid-agent').innerHTML = '';
+                
+                startRealMicrophone();
+            } else {
+                btn.textContent = "LISTEN FOR WAVEFORMS (A-JEPA)";
+                btn.className = "w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-lg transition-all text-xs mt-2";
+                
+                if (localAudioInterval) clearInterval(localAudioInterval);
+                if (micStream) {
+                    micStream.getTracks().forEach(track => track.stop());
+                }
+                if (audioCtx) {
+                    audioCtx.close();
+                }
+                cancelAnimationFrame(animationFrameIdUser);
+                cancelAnimationFrame(animationFrameIdAgent);
+                
+                ctxUser.clearRect(0, 0, canvasUser.width, canvasUser.height);
+                ctxAgent.clearRect(0, 0, canvasAgent.width, canvasAgent.height);
+                
+                document.getElementById('jepa-user-badge').textContent = "MIC INACTIVE";
+                document.getElementById('jepa-user-badge').className = "text-[8px] px-1.5 py-0.5 bg-slate-950 text-slate-500 border border-cyan-500/10 font-bold rounded uppercase";
+                document.getElementById('jepa-agent-badge').textContent = "ECHO INACTIVE";
+                document.getElementById('jepa-agent-badge').className = "text-[8px] px-1.5 py-0.5 bg-slate-950 text-slate-500 border border-pink-500/10 font-bold rounded uppercase";
+                
+                document.getElementById('jepa-synergy-val').textContent = "0.0000";
+                document.getElementById('jepa-phase-val').textContent = "1.0000";
+                document.getElementById('jepa-collision-val').textContent = "0.0000";
+                
+                document.getElementById('jit-dna-grid').innerHTML = '<div class="col-span-10 text-center text-[10px] text-slate-600 italic py-4 select-none">No active projections</div>';
+                document.getElementById('jit-dna-grid-agent').innerHTML = '<div class="col-span-10 text-center text-[10px] text-slate-600 italic py-4 select-none">No active projections</div>';
+                
+                document.getElementById('collision-suppressor-banner').textContent = "COLLISION SUPPRESSION: ACTIVE";
+                document.getElementById('collision-suppressor-banner').className = "w-full text-center py-2 px-3 rounded-lg text-emerald-400 border border-emerald-500/20 bg-emerald-950/20 font-mono text-[10px] font-bold tracking-wider";
+            }
+        }
+
+        // Web Audio API Microphonic visualizer
+        async function startRealMicrophone() {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaStreamSource(micStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                
+                drawUserWaveform();
+                drawAgentWaveform();
+                localAudioInterval = setInterval(sendJepaFeatures, 250);
+                document.getElementById('jepa-user-badge').textContent = "USER MIC ACTIVE";
+                document.getElementById('jepa-user-badge').className = "text-[8px] px-1.5 py-0.5 bg-cyan-950/60 text-cyan-400 border border-cyan-500/20 font-bold rounded animate-pulse uppercase";
+                document.getElementById('jepa-agent-badge').textContent = "ECHO ACTIVE";
+                document.getElementById('jepa-agent-badge').className = "text-[8px] px-1.5 py-0.5 bg-pink-950/60 text-pink-400 border border-pink-500/20 font-bold rounded animate-pulse uppercase";
+            } catch (e) {
+                console.warn("Microphone not available, running fallback simulated oscillator.", e);
+                drawUserWaveform();
+                drawAgentWaveform();
+                localAudioInterval = setInterval(sendJepaFeatures, 250);
+                document.getElementById('jepa-user-badge').textContent = "SIM USER ACTIVE";
+                document.getElementById('jepa-user-badge').className = "text-[8px] px-1.5 py-0.5 bg-cyan-950 text-cyan-400 border border-cyan-500/20 font-bold rounded uppercase";
+                document.getElementById('jepa-agent-badge').textContent = "SIM ECHO ACTIVE";
+                document.getElementById('jepa-agent-badge').className = "text-[8px] px-1.5 py-0.5 bg-pink-950 text-pink-400 border border-pink-500/20 font-bold rounded uppercase";
+            }
+        }
+
+        // Draw animated User waveform responsive to Microphone
+        function drawUserWaveform() {
+            if (!audioRunning) return;
+            
+            ctxUser.clearRect(0, 0, canvasUser.width, canvasUser.height);
+            
+            // Fetch live 3D parameters
+            const binauralPan = parseFloat(document.getElementById('slider-binaural-pan')?.value || '0');
+            const reflectionDepth = parseFloat(document.getElementById('slider-reflection-depth')?.value || '0.5');
+            
+            // Draw secondary visual echo (3D stereophonic reflection) first (so it stays in background)
+            if (reflectionDepth > 0) {
+                ctxUser.beginPath();
+                ctxUser.strokeStyle = 'rgba(16, 185, 129, ' + (reflectionDepth * 0.4) + ')';
+                ctxUser.lineWidth = 1.5;
+                ctxUser.shadowBlur = 4;
+                ctxUser.shadowColor = '#10b981';
+                
+                const sliceWidth = canvasUser.width / 60;
+                let x = 0;
+                const phaseOffset = Date.now() * 0.008;
+                const reflectionShift = binauralPan * 40; // shift echo according to 3D pan
+                
+                for (let i = 0; i < 60; i++) {
+                    const amp = Math.sin(i * 0.15 + phaseOffset) * Math.cos(i * 0.08) * (20 * reflectionDepth);
+                    const y = canvasUser.height / 2 + amp + 5; // slight height offset
+                    if (i === 0) {
+                        ctxUser.moveTo(x + reflectionShift, y);
+                    } else {
+                        ctxUser.lineTo(x + reflectionShift, y);
+                    }
+                    x += sliceWidth;
+                }
+                ctxUser.stroke();
+                ctxUser.shadowBlur = 0;
+            }
+
+            // Draw primary user voice manifold line
+            ctxUser.beginPath();
+            ctxUser.strokeStyle = gradUser || '#06b6d4';
+            ctxUser.lineWidth = 3;
+            ctxUser.shadowBlur = 15;
+            ctxUser.shadowColor = '#06b6d4';
+            
+            if (analyser) {
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyser.getByteTimeDomainData(dataArray);
+                const sliceWidth = canvasUser.width / bufferLength;
+                let x = 0;
+                // Modulate amplitude slightly by 3D pan for simulation effect
+                const panAmplitudeMod = 1.0 - Math.abs(binauralPan) * 0.2;
+                
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v - 1.0) * (canvasUser.height / 2) * panAmplitudeMod + (canvasUser.height / 2);
+                    if (i === 0) {
+                        ctxUser.moveTo(x, y);
+                    } else {
+                        ctxUser.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+            } else {
+                const sliceWidth = canvasUser.width / 50;
+                let x = 0;
+                const panAmplitudeMod = 1.0 - Math.abs(binauralPan) * 0.25;
+                for (let i = 0; i < 50; i++) {
+                    const amp = Math.sin(i * 0.2 + Date.now() * 0.012) * Math.cos(i * 0.05 - Date.now() * 0.006) * (20 * panAmplitudeMod);
+                    const y = canvasUser.height / 2 + amp;
+                    if (i === 0) {
+                        ctxUser.moveTo(x, y);
+                    } else {
+                        ctxUser.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+            }
+            ctxUser.stroke();
+            ctxUser.shadowBlur = 0;
+            animationFrameIdUser = requestAnimationFrame(drawUserWaveform);
+        }
+
+        // Draw animated Agent waveform
+        function drawAgentWaveform() {
+            if (!audioRunning) return;
+            
+            ctxAgent.clearRect(0, 0, canvasAgent.width, canvasAgent.height);
+            
+            // Fetch live 3D parameters
+            const binauralPan = parseFloat(document.getElementById('slider-binaural-pan')?.value || '0');
+            const reflectionDepth = parseFloat(document.getElementById('slider-reflection-depth')?.value || '0.5');
+            
+            // Draw reflection shadow first
+            if (reflectionDepth > 0) {
+                ctxAgent.beginPath();
+                ctxAgent.strokeStyle = 'rgba(139, 92, 246, ' + (reflectionDepth * 0.35) + ')';
+                ctxAgent.lineWidth = 1.5;
+                ctxAgent.shadowBlur = 4;
+                ctxAgent.shadowColor = '#8b5cf6';
+                
+                const sliceWidth = canvasAgent.width / 60;
+                let x = 0;
+                const phaseOffset = -Date.now() * 0.009;
+                const reflectionShift = -binauralPan * 40; // inverse shift for agent reflection
+                
+                for (let i = 0; i < 60; i++) {
+                    const amp = Math.sin(i * 0.18 + phaseOffset) * Math.cos(i * 0.07) * (25 * reflectionDepth);
+                    const y = canvasAgent.height / 2 + amp - 5;
+                    if (i === 0) {
+                        ctxAgent.moveTo(x + reflectionShift, y);
+                    } else {
+                        ctxAgent.lineTo(x + reflectionShift, y);
+                    }
+                    x += sliceWidth;
+                }
+                ctxAgent.stroke();
+                ctxAgent.shadowBlur = 0;
+            }
+
+            // Primary agent echo line
+            ctxAgent.beginPath();
+            ctxAgent.strokeStyle = gradAgent || '#ec4899';
+            ctxAgent.lineWidth = 3;
+            ctxAgent.shadowBlur = 15;
+            ctxAgent.shadowColor = '#ec4899';
+            
+            const sliceWidth = canvasAgent.width / 50;
+            let x = 0;
+            const panAmplitudeMod = 1.0 - Math.abs(binauralPan) * 0.25;
+            
+            for (let i = 0; i < 50; i++) {
+                const amp = Math.sin(i * 0.25 - Date.now() * 0.015) * Math.cos(i * 0.07 + Date.now() * 0.009) * (25 * panAmplitudeMod);
+                const y = canvasAgent.height / 2 + amp;
+                if (i === 0) {
+                    ctxAgent.moveTo(x, y);
+                } else {
+                    ctxAgent.lineTo(x, y);
+                }
+                x += sliceWidth;
+            }
+            
+            ctxAgent.stroke();
+            ctxAgent.shadowBlur = 0;
+            animationFrameIdAgent = requestAnimationFrame(drawAgentWaveform);
+        }
+
+        // Dialogue script for simulated Speechmatics integration
+        const sampleDialogues = [
+            { sender: "USER", text: "Initiating Yang-Mills VLIW dynamic alignment..." },
+            { sender: "AGENT", text: "[A-JEPA]: Resonance lock established. Shannon entropy stable." },
+            { sender: "USER", text: "Can we test the secondary collisional echo gate?" },
+            { sender: "AGENT", text: "[A-JEPA]: Scanning auditory phase. Collisional risk is low." },
+            { sender: "USER", text: "Is the Go orchestrator flow timeout cleared?" },
+            { sender: "AGENT", text: "[A-JEPA]: Yes, chunked POST stream parsing successfully deployed." }
+        ];
+        let dialogueIndex = 0;
+
+        // Send compiled 56-dim features to Aligner API
+        function sendJepaFeatures() {
+            let rhythm = new Array(16).fill(0);
+            let prosody = new Array(32).fill(0);
+            let emotion = new Array(8).fill(0);
+
+            if (analyser && audioCtx) {
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyser.getByteFrequencyData(dataArray);
+
+                for (let i = 0; i < 16; i++) rhythm[i] = (dataArray[i] || 0) / 255.0;
+                for (let i = 0; i < 32; i++) prosody[i] = (dataArray[16 + i] || 0) / 255.0;
+                for (let i = 0; i < 8; i++) emotion[i] = (dataArray[48 + i] || 0) / 255.0;
+            } else {
+                const t = Date.now() * 0.001;
+                for (let i = 0; i < 16; i++) rhythm[i] = Math.abs(Math.sin(t + i * 0.5) * 0.4 + Math.random() * 0.1);
+                for (let i = 0; i < 32; i++) prosody[i] = Math.abs(Math.cos(t * 1.5 + i * 0.3) * 0.5 + Math.random() * 0.1);
+                for (let i = 0; i < 8; i++) emotion[i] = Math.abs(Math.sin(t * 2.1 + i * 0.9) * 0.3 + Math.random() * 0.15);
+            }
+            const userFeatures = [...rhythm, ...prosody, ...emotion];
+
+            // Agent Channel Features (simulating real antiphase neural response)
+            let rhythmAgent = new Array(16).fill(0);
+            let prosodyAgent = new Array(32).fill(0);
+            let emotionAgent = new Array(8).fill(0);
+            const tAgent = (Date.now() * 0.001) + 1.5;
+            for (let i = 0; i < 16; i++) rhythmAgent[i] = Math.abs(Math.cos(tAgent + i * 0.4) * 0.45 + Math.random() * 0.08);
+            for (let i = 0; i < 32; i++) prosodyAgent[i] = Math.abs(Math.sin(tAgent * 1.2 + i * 0.25) * 0.48 + Math.random() * 0.09);
+            for (let i = 0; i < 8; i++) emotionAgent[i] = Math.abs(Math.cos(tAgent * 1.8 + i * 0.7) * 0.28 + Math.random() * 0.12);
+            const agentFeatures = [...rhythmAgent, ...prosodyAgent, ...emotionAgent];
+
+            const apiBase = window.location.origin === "null" || window.location.origin === "file://" || !window.location.origin
+                ? "http://localhost:8002"
+                : window.location.origin;
+
+            fetch(`${apiBase}/api/jepa/align`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    features: userFeatures,
+                    agent_features: agentFeatures
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.cognitive_synergy_score !== undefined) {
+                    const score = data.cognitive_synergy_score;
+                    document.getElementById('jepa-synergy-val').textContent = score.toFixed(4);
+                    
+                    // Modulate Dynamic Flux input live based on user's vocal arousal!
+                    const targetedFlux = Math.max(1.0, Math.min(50.0, score * 12.0));
+                    document.getElementById('input-flux').value = targetedFlux.toFixed(2);
+                    
+                    // Render Aligned User JIT DNA grid
+                    if (data.jit_dna) {
+                        renderJitDnaGrid(data.jit_dna, 'jit-dna-grid', 'rgba(6, 182, 212, ');
+                    }
+                    // Render Aligned Agent JIT DNA grid
+                    if (data.jit_dna_agent) {
+                        renderJitDnaGrid(data.jit_dna_agent, 'jit-dna-grid-agent', 'rgba(236, 72, 153, ');
+                    }
+
+                    // Render Collision metrics & Phase resonance
+                    document.getElementById('jepa-phase-val').textContent = data.phase_alignment.toFixed(4);
+                    document.getElementById('jepa-collision-val').textContent = data.collisional_risk.toFixed(4);
+
+                    // Update Collision Suppressor Badge
+                    const collBanner = document.getElementById('collision-suppressor-banner');
+                    if (data.collisional_risk > 0.4) {
+                        collBanner.textContent = "WARNING: HIGH COLLISION RISK - MUTING ECHO";
+                        collBanner.className = "w-full text-center py-2.5 px-3 rounded-xl text-amber-400 status-glow-amber font-mono text-[10px] font-black tracking-wider transition-all duration-300 animate-pulse";
+                    } else {
+                        collBanner.textContent = "COLLISION SUPPRESSION: ACTIVE";
+                        collBanner.className = "w-full text-center py-2.5 px-3 rounded-xl text-emerald-400 status-glow-emerald font-mono text-[10px] font-black tracking-wider transition-all duration-300";
+                    }
+                }
+            })
+            .catch(e => console.error("JEPA alignment head error:", e));
+
+            // Stream Speechmatics Transcript Cascade simulating live multi-turn dialogue
+            if (Math.random() < 0.15) {
+                const transcriptContainer = document.getElementById('dialogue-transcript');
+                if (transcriptContainer) {
+                    const line = sampleDialogues[dialogueIndex];
+                    dialogueIndex = (dialogueIndex + 1) % sampleDialogues.length;
+                    
+                    if (transcriptContainer.querySelector('.italic')) {
+                        transcriptContainer.innerHTML = '';
+                    }
+
+                    const div = document.createElement('div');
+                    if (line.sender === "USER") {
+                        div.className = "text-cyan-400";
+                        div.textContent = `[USER]: ${line.text}`;
+                    } else {
+                        div.className = "text-pink-400";
+                        div.textContent = `${line.text}`;
+                    }
+                    transcriptContainer.appendChild(div);
+                    transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+                }
+            }
+        }
+
+        // Render Aligned JIT DNA indicators
+        function renderJitDnaGrid(dna, containerId, rgbPrefix) {
+            const gridContainer = document.getElementById(containerId);
+            if (!gridContainer) return;
+            
+            gridContainer.innerHTML = '';
+            dna.slice(0, 80).forEach((val, idx) => {
+                const cell = document.createElement('div');
+                const intensity = Math.min(1.0, Math.abs(val) * 2.2);
+                cell.className = "h-3 rounded-full transition-all duration-300 border border-white/5 hover:scale-110 cursor-pointer";
+                cell.style.background = `${rgbPrefix}${0.1 + intensity * 0.9})`;
+                if (intensity > 0.5) {
+                    cell.style.boxShadow = `0 0 8px ${rgbPrefix}${intensity * 0.65})`;
+                    cell.style.borderColor = `${rgbPrefix}${intensity * 0.85})`;
+                }
+                gridContainer.appendChild(cell);
+            });
+        }
+
+        // Terminal logging clear utility
+        function clearTerminalLogs() {
+            document.getElementById('log-panel').innerHTML = '<div class="text-slate-600 font-bold select-none">[SYSTEM INITIALIZATION DONE]</div>';
+        }
+
+        // Flows Engine Runner
+        let flowEventSource = null;
+        
+        async function loadSystemFlows() {
+            const container = document.getElementById('flow-buttons-container');
+            const apiBase = window.location.origin;
+            
+            try {
+                const resp = await fetch(`${apiBase}/flows`);
+                const data = await resp.json();
+                const flows = data.flows || [];
+                
+                if (flows.length === 0) {
+                    renderStaticFlows();
+                    return;
+                }
+                
+                let html = '<div class="space-y-1.5">';
+                flows.forEach(flow => {
+                    html += `
+                        <button onclick="executeSystemFlow('${flow.name}')" class="w-full text-left bg-slate-950 border border-indigo-500/10 hover:border-indigo-500/30 text-indigo-300 font-mono py-2 px-3 rounded-lg transition-all hover:bg-indigo-950/20 flex justify-between items-center group">
+                            <span>🚀 ${flow.name}</span>
+                            <span class="text-[9px] text-slate-500 group-hover:text-indigo-400 font-bold">TRIGGER</span>
+                        </button>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch(e) {
+                renderStaticFlows();
+            }
+        }
+
+        function renderStaticFlows() {
+            const container = document.getElementById('flow-buttons-container');
+            const staticFlows = ['env_check', 'gpu_check', 'tph_status', 'quick_proof_report', 'formula_match'];
+            let html = '<div class="space-y-1.5">';
+            staticFlows.forEach(name => {
+                html += `
+                    <button onclick="executeSystemFlow('${name}')" class="w-full text-left bg-slate-950 border border-indigo-500/10 hover:border-indigo-500/30 text-indigo-300 font-mono py-2 px-3 rounded-lg transition-all hover:bg-indigo-950/20 flex justify-between items-center group">
+                        <span>🚀 ${name}</span>
+                        <span class="text-[9px] text-slate-500 group-hover:text-indigo-400 font-bold">TRIGGER</span>
+                    </button>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        async function executeSystemFlow(flowName) {
+            const term = document.getElementById('log-panel');
+            term.innerHTML = `<div class="text-indigo-400 font-bold">[FLOWER] Compiling registry reference: ${flowName}...</div>`;
+            
+            const apiBase = window.location.origin === "null" || window.location.origin === "file://" || !window.location.origin
+                ? "http://localhost:8443"
+                : window.location.origin;
+            
+            try {
+                const response = await fetch(`${apiBase}/run/flow/${flowName}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ input: {} })
+                });
+                
+                if (!response.ok) {
+                    term.innerHTML += `<div class="text-red-500 font-bold">[ERROR] Execution failed with status ${response.status}</div>`;
+                    return;
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let buffer = "";
+                
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop(); // keep partial line in buffer
+                    
+                    for (const line of lines) {
+                        const cleanLine = line.trim();
+                        if (cleanLine.startsWith("data:")) {
+                            const jsonStr = cleanLine.substring(5).trim();
+                            try {
+                                const data = JSON.parse(jsonStr);
+                                const lineEl = document.createElement('div');
+                                
+                                if (data.level === 'info' || data.level === 'stdout') {
+                                    lineEl.className = 'text-emerald-400';
+                                    lineEl.textContent = `[INFO] ${data.message}`;
+                                } else if (data.level === 'error' || data.level === 'warn' || data.level === 'stderr') {
+                                    lineEl.className = 'text-rose-400';
+                                    lineEl.textContent = `[${data.level.toUpperCase()}] ${data.message}`;
+                                } else {
+                                    lineEl.className = 'text-slate-300';
+                                    lineEl.textContent = data.message;
+                                }
+                                term.appendChild(lineEl);
+                                term.scrollTop = term.scrollHeight;
+                            } catch (e) {
+                                // Fallback plain text if it failed to parse as JSON
+                                const lineEl = document.createElement('div');
+                                lineEl.className = 'text-slate-400';
+                                lineEl.textContent = jsonStr;
+                                term.appendChild(lineEl);
+                                term.scrollTop = term.scrollHeight;
+                            }
+                        }
+                    }
+                }
+                term.innerHTML += `<div class="text-indigo-400 font-bold">[SYSTEM] Flow ${flowName} completed successfully.</div>`;
+            } catch (e) {
+                term.innerHTML += `<div class="text-red-500 font-bold">[ERROR] Network timeout or connection drop: ${e.message}</div>`;
+            }
+        }
+
+        // SSE Integration Logic
+        document.addEventListener("DOMContentLoaded", () => {
+            const ledgerEl = document.getElementById('live-ledger-stream');
+            const cbStreamEl = document.getElementById('coinbase-live-stream');
+            const speedInput = document.getElementById('input-speed');
+            const speedVal = document.getElementById('speed-val');
+            const selectMarket = document.getElementById('select-market');
+            const btnPauseResume = document.getElementById('btn-pause-resume');
+
+            let isSimPaused = false;
+
+            // Handle speed slider changes
+            speedInput.addEventListener('input', () => {
+                speedVal.textContent = parseFloat(speedInput.value).toFixed(1) + 's';
+            });
+
+            function triggerSimulation() {
+                const capital = parseFloat(document.getElementById('input-capital').value) || 100000;
+                const winrate = parseFloat(document.getElementById('input-winrate').value) || 65;
+                const flux = parseFloat(document.getElementById('input-flux').value) || 5.0;
+                const market = selectMarket.value;
+                const speed = parseFloat(speedInput.value) || 1.0;
+                
+                ledgerEl.innerHTML = `<div class="text-indigo-400 italic">Initiating Sovereign Paper Desks & Coinbase HFT pipelines for ${market}...</div>`;
+                cbStreamEl.innerHTML = '<div class="text-indigo-400 italic">Initiating Coinbase WebSocket Level 2 tracking stream...</div>';
+                
+                // Force pause state to false on run/trigger
+                isSimPaused = false;
+                btnPauseResume.innerHTML = '<span>⏸️ PAUSE SIMULATION</span>';
+                btnPauseResume.className = "w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-amber-600/10 transition-all flex items-center justify-center space-x-2";
+
+                fetch('/api/paper-trader/simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        capital: capital, 
+                        winrate: winrate / 100.0, 
+                        flux: flux,
+                        market: market,
+                        speed: speed
+                    })
+                }).catch(e => console.error(e));
+            }
+
+            document.getElementById('btn-calculate').addEventListener('click', triggerSimulation);
+            
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                document.getElementById('input-capital').value = 100000;
+                document.getElementById('input-winrate').value = 65;
+                document.getElementById('input-flux').value = 5.0;
+                speedInput.value = 1.0;
+                speedVal.textContent = '1.0s';
+                selectMarket.value = 'BTC';
+                triggerSimulation();
+            });
+
+            // Pause/Resume Simulation Button handler
+            btnPauseResume.addEventListener('click', () => {
+                if (isSimPaused) {
+                    fetch('/api/paper-trader/resume', { method: 'POST' })
+                        .then(() => {
+                            isSimPaused = false;
+                            btnPauseResume.innerHTML = '<span>⏸️ PAUSE SIMULATION</span>';
+                            btnPauseResume.className = "w-full bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-amber-600/10 transition-all flex items-center justify-center space-x-2";
+                        })
+                        .catch(e => console.error("Error resuming simulation:", e));
+                } else {
+                    fetch('/api/paper-trader/pause', { method: 'POST' })
+                        .then(() => {
+                            isSimPaused = true;
+                            btnPauseResume.innerHTML = '<span>▶️ RESUME SIMULATION</span>';
+                            btnPauseResume.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-emerald-600/10 transition-all flex items-center justify-center space-x-2";
+                        })
+                        .catch(e => console.error("Error pausing simulation:", e));
+                }
+            });
+
+            // Start Paper Desk SSE Stream
+            paperEventSource = new EventSource('/api/paper-trader/stream');
+            paperEventSource.onmessage = function(event) {
+                if (isSimPaused) return; // Frozen UI state when paused
+
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.portfolio_value !== undefined) {
+                        const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data.portfolio_value);
+                        document.getElementById('simulated-pnl').textContent = formatted;
+                        document.getElementById('gain-total').textContent = formatted;
+                    }
+                    if (data.usd_balance !== undefined) {
+                        document.getElementById('gain-algo').textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data.usd_balance);
+                    }
+                    
+                    const assetSymbol = data.asset_symbol || selectMarket.value || 'BTC';
+                    if (data.asset_symbol !== undefined) {
+                        document.getElementById('label-asset-balance').textContent = assetSymbol + ' BALANCE';
+                    }
+
+                    if (data.btc_balance !== undefined) {
+                        let prefix = '';
+                        const prefixes = {
+                            'BTC': '₿', 'ETH': 'Ξ', 'SOL': '◎', 'ADA': '₳', 'DOGE': '🐕 ',
+                            'XRP': '✕', 'DOT': '●', 'LINK': '🔗 ', 'AVAX': '🔺', 'MATIC': '🟣 ',
+                            'BNB': '🔶', 'LTC': 'Ł', 'SHIB': '🐕 ', 'ATOM': '⚛️', 'UNI': '🦄 ',
+                            'SPY': '📊', 'QQQ': '📈', 'AAPL': '🍏', 'MSFT': '💻', 'GOOGL': '🔍',
+                            'NVDA': '💚', 'TSLA': '⚡', 'AMZN': '📦', 'META': '♾️', 'AMD': '🔴'
+                        };
+                        prefix = prefixes[assetSymbol] || '$';
+                        document.getElementById('gain-arb').textContent = prefix + parseFloat(data.btc_balance).toFixed(5);
+                    }
+                    if (data.dynamic_flux !== undefined) {
+                        document.getElementById('input-flux').value = parseFloat(data.dynamic_flux).toFixed(2);
+                        
+                        const pct = Math.min((data.dynamic_flux / 50.0) * 100, 100);
+                        document.getElementById('flux-bar').style.width = pct + '%';
+                        
+                        const safetyEl = document.getElementById('safety-stop-status');
+                        if (pct >= 100) {
+                            safetyEl.textContent = "HALT ACTIVE (F=1)";
+                            safetyEl.className = "px-2 py-0.5 rounded font-bold text-[10px] bg-red-950/60 text-red-400 border border-red-500/20 animate-pulse";
+                        } else {
+                            safetyEl.textContent = "SAFE (HALT=0)";
+                            safetyEl.className = "px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-950/60 text-emerald-400 border border-emerald-500/20";
+                        }
+                    }
+
+                    if (data.action) {
+                        const curTrades = parseInt(document.getElementById('stat-total-trades').textContent) || 0;
+                        document.getElementById('stat-total-trades').textContent = curTrades + 1;
+
+                        const div = document.createElement('div');
+                        div.className = "border-b border-indigo-500/5 pb-1.5";
+                        const time = new Date().toLocaleTimeString();
+                        const actSpan = `<span class="${data.action === 'BUY' ? 'text-emerald-400' : 'text-rose-400'} font-bold">${data.action}</span>`;
+                        
+                        div.innerHTML = `<span class="text-slate-500">[${time}]</span> ${actSpan} | Qty: ${parseFloat(data.qty).toFixed(5)} ${assetSymbol} | Price: $${parseFloat(data.price).toFixed(2)} | ROI: ${parseFloat(data.roi_pct).toFixed(3)}%`;
+                        
+                        ledgerEl.appendChild(div);
+                        if (ledgerEl.children.length > 50) ledgerEl.removeChild(ledgerEl.firstChild);
+                        ledgerEl.scrollTop = ledgerEl.scrollHeight;
+                    }
+                } catch(e) {
+                    console.error(e);
+                }
+            };
+
+            // Coinbase Feed Controls setup
+            const cbSelectMarket = document.getElementById('cb-select-market');
+            const cbSelectSource = document.getElementById('cb-select-source');
+            const cbInputSpeed = document.getElementById('cb-input-speed');
+            const cbSpeedVal = document.getElementById('cb-speed-val');
+            const btnCbUpdate = document.getElementById('btn-cb-update');
+            const btnCbPauseResume = document.getElementById('btn-cb-pause-resume');
+
+            let isCbFeedPaused = false;
+
+            btnCbPauseResume.addEventListener('click', () => {
+                isCbFeedPaused = !isCbFeedPaused;
+                if (isCbFeedPaused) {
+                    btnCbPauseResume.innerHTML = '▶️ RESUME FEED';
+                    btnCbPauseResume.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/10 transition-all";
+                } else {
+                    btnCbPauseResume.innerHTML = '⏸️ PAUSE FEED';
+                    btnCbPauseResume.className = "bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-amber-600/10 transition-all";
+                }
+            });
+
+            // Global Quick Selector Handlers
+            window.quickSelectMarket = function(symbol) {
+                const select = document.getElementById('select-market');
+                select.value = symbol;
+                console.log(`[QUICK SELECT] Market set to: ${symbol}`);
+                triggerSimulation(); // Auto-restart / update stream instantly!
+            };
+
+            window.quickSelectCbMarket = function(symbol) {
+                cbSelectMarket.value = symbol;
+                console.log(`[QUICK SELECT CB] Feed market set to: ${symbol}`);
+                updateCoinbaseFeed(); // Auto-trigger Coinbase configure instantly!
+            };
+
+            // Qwen Mood-Ring Synthesizer via ChatTTS
+            window.synthesizeQwenMoodRing = async function() {
+                const statusEl = document.getElementById('qwen-voice-status');
+                const btnVoice = document.getElementById('btn-qwen-voice');
+                const audio = document.getElementById('qwen-mood-audio');
+                
+                const synergy = parseFloat(document.getElementById('jepa-synergy-val').textContent) || 0.0;
+                const phase = parseFloat(document.getElementById('jepa-phase-val').textContent) || 0.0;
+                const collision = parseFloat(document.getElementById('jepa-collision-val').textContent) || 0.0;
+                const oralStyle = parseInt(document.getElementById('qwen-oral-style').value) || 7;
+                const laughter = parseInt(document.getElementById('qwen-laughter').value) || 3;
+                
+                statusEl.textContent = "Analyzing A-JEPA Alignment Manifold...";
+                statusEl.className = "text-[9px] font-mono text-pink-400 font-bold animate-pulse text-center";
+                btnVoice.disabled = true;
+                
+                // Construct premium narrative based on live synergy scores!
+                let emotionalTone = "";
+                let alignmentMessage = "";
+                
+                if (synergy > 0.7) {
+                    emotionalTone = "highly aligned, vibrating in deep cognitive synchrony, with a touch of electric excitation";
+                    alignmentMessage = "The synergy score is exceptional, indicating that Channel A and B are locked in phase, with zero destructive auditory interference. The user is experiencing clear clarity and high creative flow.";
+                } else if (synergy > 0.4) {
+                    emotionalTone = "calm, stable, and warm, showing moderate intellectual resonance";
+                    alignmentMessage = "The phase coordinates are harmonizing nicely. The alignment vectors are converging towards a stable equilibrium, but could use slightly more rhythmic cadence.";
+                } else {
+                    emotionalTone = "somewhat scattered, with high cognitive turbulence and vocal dispersion";
+                    alignmentMessage = "There is significant phase misalignment. Rhythmic collisions are dragging down the synergy matrix, calling for a slow deep breath to realign the dual soundstage.";
+                }
+                
+                if (collision > 0.4) {
+                    emotionalTone += " [laugh] and conversational anticipation";
+                }
+                
+                const text = `The auditory mood ring registers a synergy score of ${synergy.toFixed(2)}. The phase coherence is at ${phase.toFixed(2)}. [uv_break] The human speaker's vocal manifold is ${emotionalTone}. [uv_break] ${alignmentMessage}`;
+                
+                statusEl.textContent = "Synthesizing voice via local ChatTTS (Port 7777)...";
+                
+                try {
+                    const response = await fetch('/api/chattts/api/chattts/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text: text,
+                            seed: Math.floor(Math.random() * 500) + 1,
+                            speed: 0.9,
+                            temperature: 0.3,
+                            oral_level: oralStyle,
+                            laugh_level: laughter,
+                            break_level: 3,
+                            skip_refine: false
+                        })
+                    });
+                    
+                    const resData = await response.json();
+                    if (resData.success && resData.audio_url) {
+                        statusEl.textContent = `Vocalizing Resonance Narrative... (${resData.duration_seconds}s)`;
+                        statusEl.className = "text-[9px] font-mono text-emerald-400 font-bold text-center";
+                        
+                        audio.src = '/api/chattts' + resData.audio_url;
+                        audio.play();
+                    } else {
+                        statusEl.textContent = "Error: " + (resData.error || "Model generation failed");
+                        statusEl.className = "text-[9px] font-mono text-rose-500 font-bold text-center";
+                    }
+                } catch(e) {
+                    console.error(e);
+                    statusEl.textContent = "Voice Hub Offline or Request Failed";
+                    statusEl.className = "text-[9px] font-mono text-rose-500 font-bold text-center";
+                } finally {
+                    btnVoice.disabled = false;
+                }
+            };
+
+            cbInputSpeed.addEventListener('input', () => {
+                cbSpeedVal.textContent = parseFloat(cbInputSpeed.value).toFixed(1) + 's';
+            });
+
+            function updateCoinbaseFeed() {
+                const market = cbSelectMarket.value;
+                const source = cbSelectSource.value;
+                const speed = parseFloat(cbInputSpeed.value);
+
+                btnCbUpdate.textContent = "UPDATING...";
+                btnCbUpdate.disabled = true;
+                btnCbUpdate.className = "bg-indigo-800 text-slate-400 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed";
+
+                fetch('/api/coinbase/configure', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        market: market,
+                        source: source,
+                        speed: speed
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    console.log("[CB UPDATE] Configured:", data);
+                    cbStreamEl.innerHTML = '';
+                    setTimeout(() => {
+                        btnCbUpdate.textContent = "UPDATE FEED";
+                        btnCbUpdate.disabled = false;
+                        btnCbUpdate.className = "bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-indigo-600/10 transition-all";
+                    }, 500);
+                })
+                .catch(e => {
+                    console.error("Error updating Coinbase feed:", e);
+                    btnCbUpdate.textContent = "ERROR";
+                    btnCbUpdate.disabled = false;
+                    btnCbUpdate.className = "bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-lg shadow-rose-600/10 transition-all";
+                });
+            }
+
+            btnCbUpdate.addEventListener('click', updateCoinbaseFeed);
+
+            // Start Coinbase WSS SSE Stream
+            coinbaseEventSource = new EventSource('/api/coinbase/stream');
+            coinbaseEventSource.onmessage = function(event) {
+                if (isCbFeedPaused) return; // Frozen UI state when paused
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.feature_8d) {
+                        const [shannon, spectral, imbalance, spread, vol, mid, micro, ofi] = data.feature_8d;
+                        
+                        document.getElementById('metric-shannon').textContent = parseFloat(shannon).toFixed(3);
+                        document.getElementById('metric-spectral').textContent = parseFloat(spectral).toFixed(3);
+                        
+                        const imbalEl = document.getElementById('metric-imbalance');
+                        imbalEl.textContent = (imbalance >= 0 ? '+' : '') + parseFloat(imbalance).toFixed(3);
+                        imbalEl.className = `text-2xl font-black mt-1 font-mono ${imbalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                        const ofiEl = document.getElementById('metric-ofi');
+                        ofiEl.textContent = parseFloat(ofi).toFixed(1);
+                        ofiEl.className = `text-2xl font-black mt-1 font-mono ${ofi >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                        document.getElementById('cb-spread').textContent = parseFloat(spread).toFixed(2) + ' bps';
+                        document.getElementById('cb-mid-price').textContent = '$' + parseFloat(mid).toFixed(2);
+                        document.getElementById('cb-microprice').textContent = '$' + parseFloat(micro).toFixed(2);
+                        document.getElementById('cb-std').textContent = parseFloat(vol).toFixed(3);
+
+                        const halfSpread = (mid * (spread / 10000)) / 2;
+                        document.getElementById('cb-best-bid').textContent = '$' + (mid - halfSpread).toFixed(2);
+                        document.getElementById('cb-best-ask').textContent = '$' + (mid + halfSpread).toFixed(2);
+
+                        const assetSymbol = data.asset_symbol || cbSelectMarket.value || 'BTC';
+
+                        const div = document.createElement('div');
+                        div.className = "border-b border-indigo-500/5 pb-1 text-[10px]";
+                        const time = new Date().toLocaleTimeString();
+                        
+                        div.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="text-indigo-400 font-bold">L2_METRIC (${assetSymbol})</span> | Mid: $${mid.toFixed(2)} | Shannon: ${shannon.toFixed(3)} | OFI: ${ofi > 0 ? '+' : ''}${ofi.toFixed(0)} | Imbal: ${imbalance.toFixed(2)}`;
+                        
+                        cbStreamEl.appendChild(div);
+                        if (cbStreamEl.children.length > 50) cbStreamEl.removeChild(cbStreamEl.firstChild);
+                        cbStreamEl.scrollTop = cbStreamEl.scrollHeight;
+                    }
+                } catch(e) {
+                    console.error(e);
+                }
+            };
+            
+            // Load registry flows
+            loadSystemFlows();
+        });
+    </script>
+</body>
+</html>
